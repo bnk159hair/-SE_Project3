@@ -8,7 +8,10 @@ var pool = mysql.createPool(config.mySQL_config);
 
 //비밀 번호 암호화
 const bcrypt = require('bcrypt');
+const { useColors } = require('debug/src/browser');
 const saltRounds = 10
+const jwt = require('jsonwebtoken');
+const app = require('../app');
 
 
 /* GET home page. */
@@ -20,7 +23,7 @@ router.get('/register', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/register', function(req, res, next){
+router.post('/api/users/register', function(req, res, next){
   console.log(req.body)
 
   var member_email = req.body.member_email;
@@ -56,4 +59,53 @@ router.post('/register', function(req, res, next){
     });
   });
 });
+
+router.post('/api/users/login', function(req, res){
+  var member_email= req.body.member_email
+  var member_password = req.body.member_password
+  
+  pool.getConnection(function(err, connection){
+    var sqlForSelectMember = "SELECT * FROM members where member_email = ? "
+    connection.query(sqlForSelectMember, member_email, function(err,rows){
+      //요청된 이메일을 데이터베이스에서 있는지 찾는다.
+      if(err) console.error("err: "+err);
+      console.log("rows : "+JSON.stringify(rows));
+      // rows가 어떤 값을 갖는지 보기
+      // 없다면
+      console.log(rows.length)
+      if(rows.length === 0){
+        return res.json({
+          loginSucess: false,
+          message: "제공된 이메일에 해당하는 유저가 없습니다."
+        })
+      }
+      console.log(rows[0].member_password)
+      //있다면
+      //요청된 이메일이 데이터베이스에 있다면 비밀번호가 맞는 비밀번호인지 확인
+      bcrypt.compare(member_password, rows[0].member_password, function(err, isMatch){
+        if(err) console.error("login_bcrpyt_compare_eror: "+err);
+        if(!isMatch)
+        return res.json({ loginSuccess: false, message: "비밀번호가 틀렸습니다."});
+        //비밀번호 까지 맞다면 토큰을 생성하기.
+        //jsonwebtoken을 이용해서 token생성
+        var token = jwt.sign(rows[0].member_id, 'secretToken')
+        var data = [token, member_email]
+        var sqlForUpdateMember = "Update members SET token=? WHERE member_email=?"
+        connection.query(sqlForUpdateMember, data, function(err, result){
+          // 토큰 저장-> 쿠키 
+          if(err) console.error("login_token_update_err: ", err);
+          res.cookie("x.auth",token).status(200).json({loginSuccess: true, userId: token})
+        });
+      });
+      
+      //return res.status(200).json({
+      //  sucess: true
+      //}); 
+
+      //res.redirect('/') //-> board로 redirect
+      //connection.release();
+    });
+  });
+});
+
 module.exports = router;
