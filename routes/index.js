@@ -8,11 +8,11 @@ var pool = mysql.createPool(config.mySQL_config);
 
 //비밀 번호 암호화
 const bcrypt = require('bcrypt');
-const { useColors } = require('debug/src/browser');
 const saltRounds = 10
 const jwt = require('jsonwebtoken');
-const app = require('../app');
 
+//인증
+const {auth} = require("../middleware/auth")
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -105,6 +105,15 @@ router.post('/api/users/login', function(req, res){
       //res.redirect('/') //-> board로 redirect
       //connection.release();
     });
+  });
+});
+
+router.post('/api/users/auth', auth, function(req,res){
+  console.log('auth given req.rows: ' + JSON.stringify(req.row))
+  //auth middle ware를 통과했다는 얘기는 authentication이 성공적으로 되었다는 말
+  return res.status(200).json({
+    member_id: req.row.member_id,
+    member_email: req.row.member_email
   });
 });
 
