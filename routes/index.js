@@ -12,7 +12,8 @@ const saltRounds = 10
 const jwt = require('jsonwebtoken');
 
 //인증
-const {auth} = require("../middleware/auth")
+const {auth} = require("../middleware/auth");
+const app = require('../app');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -94,7 +95,7 @@ router.post('/api/users/login', function(req, res){
         connection.query(sqlForUpdateMember, data, function(err, result){
           // 토큰 저장-> 쿠키 
           if(err) console.error("login_token_update_err: ", err);
-          res.cookie("x.auth",token).status(200).json({loginSuccess: true, userId: token})
+          res.cookie("x_auth",token).status(200).json({loginSuccess: true, userId: token})
         });
       });
       
@@ -114,6 +115,20 @@ router.post('/api/users/auth', auth, function(req,res){
   return res.status(200).json({
     member_id: req.row.member_id,
     member_email: req.row.member_email
+  });
+});
+
+router.get('/api/users/logout', auth, function(req, res){
+  console.log('auth given req.rows: ' + JSON.stringify(req.row));
+  pool.getConnection(function(err, connection){
+    var data = ["",req.row.member_id]
+    var sqlForSelectMember = "Update members SET token=? where member_id=?"
+    connection.query(sqlForSelectMember, data, function(err,rows){
+      if(err) console.error("err: "+err);
+      return res.status(200).send({
+        success: true
+      });
+    });
   });
 });
 

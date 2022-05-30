@@ -7,6 +7,7 @@ const config = require('../config/key');
 var pool = mysql.createPool(config.mySQL_config);
 
 let auth = function(req, res, next){
+    console.log("req: ", req)
     //인증을 처리하는 곳
 
     //client cookie에서 토큰을 가져오기
@@ -22,12 +23,13 @@ let auth = function(req, res, next){
     
     let token = req.cookies.x_auth; //=> 원래는 이걸로해야함. test하려고 위에꺼 사용
 
+    console.log(req.cookies)
     //console.log(req.body.cookies.x_auth)
     console.log('auth given token: ' + token)
     //token을 복호화 한 후 user를 찾기
     jwt.verify(token, 'secretToken', function(err, decoded){
         console.log('Decoded member_email: ' + decoded)
-        //유저아이디를 이용해서 유절르 찾은 다음 클라이언트에서 가져온 token과 DB에 보관된 토큰이 일치하는지 확인
+        //유저아이디를 이용해서 유저를 찾은 다음 클라이언트에서 가져온 token과 DB에 보관된 토큰이 일치하는지 확인
         pool.getConnection(function(err, connection){
             var sqlForSelectMember = "SELECT * FROM members where member_id = ? && token = ?"
             var data = [decoded, token]
