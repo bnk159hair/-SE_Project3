@@ -27,7 +27,7 @@ const NavBar = () => {
                 />
                 <span className="search-button">
                     <img 
-                    src="./images/돋보기.png"
+                    src="./images/glass.png"
                     onClick={clickSearchButton}
                     height="38px"
                     width="38px"

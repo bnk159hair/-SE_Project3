@@ -31,7 +31,7 @@ function App() {
 
   return (
     <div className="App">
-      <NavBar />
+      <NavBar imageLink="./images/glass.png"/>
       {/*<form onSubmit={addMovie}>
         <input
           type="text"
@@ -48,7 +48,7 @@ function App() {
         <button>영화 추가</button>
       </form>
       */}
-      <MainImage imageSrc="./images/background1.png" />
+      <MainImage />
 
       <div className="productList">
         <ProductInfo imageLink="./images/logo192.png" productName="samsung" date="2022/04/05" />
