@@ -16,9 +16,13 @@ const {auth} = require("../middleware/auth");
 const app = require('../app');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+// router.get('/', function(req, res, next) {
+//   res.render('index', { title: 'Express' });
+// });
+
+router.get('/', (req, res) => {
+  res.send({test: "hi"});
+})
 
 router.get('/register', function(req, res, next) {
   res.render('index', { title: 'Express' });
