@@ -10,6 +10,9 @@ const registerRouter = require('./routes/register');
 
 var app = express();
 
+const port=5000; // React가 3000번 port를 사용하기 때문에, node는 5000으로 지정
+app.listen(port, ()=>{console.log(`Listening on port ${port}`)});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
