@@ -2,10 +2,7 @@ import { click } from '@testing-library/user-event/dist/click';
 import React, {useState, useEffect} from 'react';
 import './App.css';
 
-import Counter from './components/Counter';
 import Login from './components/LoginPage';
-import Condition from './components/Condition';
-import Movie from './components/Movie';
 import ProductInfo from './components/ProductInfo';
 import NavBar from './components/NavBar';
 import MainImage from './components/MainImage';
@@ -31,29 +28,6 @@ function App() {
     console.log(count);
   }, [count]);
   console.log('rendering');
-
-  const renderMovies = movies.map(movie => {
-    return (
-      <Movie movie={movie} key={movie.title}/>
-    )
-  });
-
-  // function which add movie to movie list
-  const addMovie = (event) => {
-    event.preventDefault();
-    // push movie to movie list
-    // ...: 구조 분해 할당, 대괄호를 벗기고 안의 내용만 넣어주는 연산자의 역할
-    setMovies([
-      ...movies,
-      {
-        title: movieTitle, 
-        year: movieYear
-      }
-    ]);
-    // reset title and year variables.
-    setMovieTitle('');
-    setMovieYear('');
-  };
 
   return (
     <div className="App">
