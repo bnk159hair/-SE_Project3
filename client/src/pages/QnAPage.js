@@ -26,7 +26,7 @@ const QnAPage = (props) => {
           <table>
             <tbody>
               <tr>
-                <th>제목</th>
+                <th>제목 </th>
                 <td>
                   <input
                     type='text'
