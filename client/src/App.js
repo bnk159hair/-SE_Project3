@@ -9,6 +9,7 @@ import MainImage from './components/MainImage';
 import BuyPage from './pages/BuyPage';
 import SellPage from './pages/SellPage';
 import QnAPage from './pages/QnAPage';
+import MyPage from './pages/MyPage';
 function App() {
   const [count, setCount] = useState(0);
 
@@ -54,7 +55,7 @@ function App() {
 
       <div className="productList">
         {/* <BuyPage></BuyPage> */}
-        <QnAPage></QnAPage>
+        <MyPage></MyPage>
       </div>
     </div>
   );
