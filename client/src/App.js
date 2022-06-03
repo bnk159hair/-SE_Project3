@@ -6,7 +6,9 @@ import Login from './components/LoginPage';
 import ProductInfo from './components/ProductInfo';
 import NavBar from './components/NavBar';
 import MainImage from './components/MainImage';
-
+import BuyPage from './pages/BuyPage';
+import SellPage from './pages/SellPage';
+import QnAPage from './pages/QnAPage';
 function App() {
   const [count, setCount] = useState(0);
 
@@ -51,10 +53,8 @@ function App() {
       <MainImage />
 
       <div className="productList">
-        <ProductInfo imageLink="./images/logo192.png" productName="samsung" date="2022/04/05" />
-        <ProductInfo imageLink="./images/logo192.png" productName="apple" date="2001/03/01" /> 
-        <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" />
-        <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" />       
+        {/* <BuyPage></BuyPage> */}
+        <QnAPage></QnAPage>
       </div>
     </div>
   );
