@@ -1,0 +1,47 @@
+.form-signin{
+    width: 300px;
+    border-radius: 5px;
+    background-color: white;
+
+    padding: 20px;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.text_field{
+    font-size: 14px;
+    margin-bottom: 10px;
+    padding: 10px;
+
+    border: none;
+    border-radius: 5px;
+
+    width: 95%;
+}
+
+.submit_btn{
+    color: #EEEFF1;
+    font-size: 14px;
+    background-color: silver;
+
+    padding: 10px;
+    margin-bottom: 30px;
+
+    border: none;
+    border-radius: 5px;
+
+    width: 100%;
+}
+
+.submit_btn:hover{
+    cursor: pointer;
+}
+
+.link{
+    text-align: center;
+}
+
+.link a{
+    font-size: 12px;
+    color: silver;
+}
