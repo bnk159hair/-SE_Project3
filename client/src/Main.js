@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { Link } from 'react-router-dom';
 import './App.css';
 
 import ProductInfo from './components/ProductInfo';
@@ -17,7 +18,7 @@ function Main() {
     return (
         <div className="App">
             <NavBar imageLink="./images/glass.png"/>
-            <MainImage />
+            <MainImage imageSrc="./images/background1.png" />
 
             <div className="productList">
                 <ProductInfo imageLink="./images/logo192.png" productName="samsung" date="2022/04/05" />
@@ -25,7 +26,7 @@ function Main() {
                 <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" />
                 <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" />       
             </div>
-            
+            <Link to='/login'>로그인 이동</Link>
         </div>
     );
 }
