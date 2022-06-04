@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Link, RouteComponentProps} from 'react-router-dom';
 
-import Main from './Main';
 import Router from './Router';
 
 function App() {

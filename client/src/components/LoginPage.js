@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import axios from 'axios';
+
 import './LoginPage.css';
 
 const Login = (props) => {
@@ -6,8 +8,26 @@ const Login = (props) => {
     const [password, setPassword] = useState('');
 
     const onClickLogin = () => {
-        alert(email);
-        // 여기서 아이디와 비밀번호를 확인하는 로직 구현해야.
+        console.log("Login button clicked!");
+        console.log(email, password);
+
+        axios.get('/api').then(res =>
+            {
+                console.log(res);
+            });
+
+        axios.post('/api/users/login', null, {
+            params: {
+               'member_email': email,
+               'member_password': password
+            }
+        })
+        .then(
+            res=>{
+                console.log(res);
+                console.log('')
+            }
+        )
     }
 
     return(
