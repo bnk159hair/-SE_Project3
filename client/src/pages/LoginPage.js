@@ -56,6 +56,8 @@ const Login = (props) => {
                 />
             </form>
             <div class="link">
+                <a href="">회원가입을 혹시 하고싶으신가요??</a>
+                <br />
                 <a href="">비밀번호를 혹시 잊으셨나요??</a>
             </div>
             
