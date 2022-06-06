@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 
 import Main from './Main';
-import LoginPage from './components/LoginPage';
+import LoginPage from './pages/LoginPage';
 
 const Router = () => {
     return (

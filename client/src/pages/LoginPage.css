@@ -20,14 +20,14 @@
 }
 
 .submit_btn{
-    color: #EEEFF1;
+    color: white;
     font-size: 14px;
     background-color: silver;
 
     padding: 10px;
     margin-bottom: 30px;
 
-    border: none;
+    border: 1px solid silver;
     border-radius: 5px;
 
     width: 100%;
@@ -35,6 +35,9 @@
 
 .submit_btn:hover{
     cursor: pointer;
+    border: 1px solid black;
+
+    color: black
 }
 
 .link{
