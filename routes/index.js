@@ -68,12 +68,10 @@ router.post('/api/users/register', function(req, res, next){
 router.post('/api/users/login', function(req, res){
   var member_email= req.body.member_email
   var member_password = req.body.member_password
-  
+
   pool.getConnection(function(err, connection){
     var sqlForSelectMember = "SELECT * FROM members where member_email = ? "
     
-    console.log('hi complete');
- 
     connection.query(sqlForSelectMember, member_email, function(err,rows){
       //요청된 이메일을 데이터베이스에서 있는지 찾는다.
       if(err) console.error("err: "+err);

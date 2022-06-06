@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {Redirect} from 'react-router-dom';
 import axios from 'axios';
 
 import './LoginPage.css';
@@ -9,23 +10,24 @@ const Login = (props) => {
 
     const onClickLogin = () => {
         console.log("Login button clicked!");
+        alert('hello');
         console.log(email, password);
-
-        axios.get('/api').then(res =>
-            {
-                console.log(res);
-            });
-
-        axios.post('/api/users/login', null, {
-            params: {
-               'member_email': email,
-               'member_password': password
+        alert(email);
+        axios.post('/api/users/login', {
+               member_email: email,
+               member_password: password
             }
-        })
-        .then(
-            res=>{
-                console.log(res);
-                console.log('')
+        )
+        .then(function(res) {
+                if(res.loginSuccess) {
+                    // 로그인에 성공한 경우 id를 출력
+                    console.log(res.userId);
+                    return <Redirect to='/' />
+                }
+                else{
+                    // 로그인에 실패한 경우 메시지를 출력
+                    alert(res.message);
+                }
             }
         )
     }
