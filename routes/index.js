@@ -20,11 +20,11 @@ const app = require('../app');
 //   res.render('index', { title: 'Express' });
 // });
 
-router.get('/', (req, res) => {
+router.get('/api', (req, res) => {
   res.send({test: "hi"});
-})
+});
 
-router.get('/register', function(req, res, next) {
+router.get('/api/register', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
@@ -71,6 +71,9 @@ router.post('/api/users/login', function(req, res){
   
   pool.getConnection(function(err, connection){
     var sqlForSelectMember = "SELECT * FROM members where member_email = ? "
+    
+    console.log('hi complete');
+ 
     connection.query(sqlForSelectMember, member_email, function(err,rows){
       //요청된 이메일을 데이터베이스에서 있는지 찾는다.
       if(err) console.error("err: "+err);
@@ -103,9 +106,9 @@ router.post('/api/users/login', function(req, res){
         });
       });
       
-      //return res.status(200).json({
-      //  sucess: true
-      //}); 
+      return res.status(200).json({
+        sucess: true
+      }); 
 
       //res.redirect('/') //-> board로 redirect
       //connection.release();

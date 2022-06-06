@@ -1,6 +1,11 @@
 body {
   font-family: 'nanumsquare';
   margin: 0px;
+  background-color: silver;
+}
+
+.App {
+  background-color: white;
 }
 
 .nav-bar {
@@ -19,6 +24,15 @@ body {
   display: flex;
   flex-direction: row;
   margin-bottom: 20px;
+}
+
+.category {
+  color: white;
+  text-decoration: none;
+}
+
+.category:hover{
+  text-decoration: underline;
 }
 
 .search-button:hover {
