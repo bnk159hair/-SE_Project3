@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Redirect} from 'react-router-dom';
+import {Navigate, Link} from 'react-router-dom';
 import axios from 'axios';
 
 import './LoginPage.css';
@@ -22,7 +22,7 @@ const Login = (props) => {
                 if(res.loginSuccess) {
                     // 로그인에 성공한 경우 id를 출력
                     console.log(res.userId);
-                    return <Redirect to='/' />
+                    return <Navigate replace to='/' />
                 }
                 else{
                     // 로그인에 실패한 경우 메시지를 출력
