@@ -16,7 +16,7 @@ const {auth} = require("../middleware/auth");
 const app = require('../app');
 
 //사진
-/*const multer = require('multer');
+const multer = require('multer');
 //const upload = multer({ dest: 'public/'});
 const upload = multer({
     storage: multer.diskStorage({
@@ -27,7 +27,7 @@ const upload = multer({
             cb(null, file.originalname);
         }
     }),
-});*/
+});
 
 
 router.get('/member_selling', auth, function(req, res){ // 개인판매상품 목록 - 테스트 완료
@@ -48,7 +48,7 @@ router.get('/member_selling', auth, function(req, res){ // 개인판매상품 �
     }
 });
 
-router.get('/info/:idx',/* auth,*/ function(req, res){ // 특정 판매상품 - 테스트 완료
+router.get('/info/:idx', auth, function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
     var idx = req.body.product_id; //승건 참고
     try {
         pool.getConnection(function(err, connection){
@@ -67,17 +67,48 @@ router.get('/info/:idx',/* auth,*/ function(req, res){ // 특정 판매상품 - 
     }
 });
 
-/*router.get('/sellwrite', auth, function(req, res, next){ //물건 판매하기 사이트 불러오기
+router.get('/sellwrite', auth, function(req, res, next){ //물건 판매하기 사이트 불러오기
     var member_id = req.body.member_id;
 
     res.render('selwrite', {title: "물건 판매글 등록"});
-});*/
+});
 
-//router.post('/selwrite', upload.array('img'), function(req,res){ //데이터 업로드
+router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 업로드
+    var product_title = req.body.product_title;
+    var product_saler = req.body.product_saler;
+    var product_price = req.body.product_price;
+    var product_interest = 0;
+    var product_state = 0; //판매중: 0
+    var product_content = req.body.product_content;
+    var product_image = new Array();
+    //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
+    
+    pool.getConnection(function(err, connection){
+        var sqlForSelectList = "INSERT INTO products(product_title, product_saler, product_price, product_interest, product_state, product_content) VALUES (?, ?, ?, ?, ?, ?);"
+        datas = [product_title, product_saler, product_price, product_interest, product_state, product_content];
+        connection.query(sqlForSelectList, datas, function(err, result){
+            if(err) console.error("err : "+err);
+            console.log("insert ID : "+JSON.stringify(result.insertId));
+            insertID = result.insertId;
+            for(let i =0; i<req.files.length; i++){
+            //     product_image.push([insertID, req.files[i].filename]);
+            };
+            // for(let i =0; i<filename.length; i++){
+            //     product_image.push([insertID, filename[i]]);
+            // }
+            var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
+            connection.query(sqlForPhoto, [product_image], function(err, result){
+                if(err) console.error("err : "+err);
+                console.log("insert ID : "+JSON.stringify(result.insertId));
+                
+                res.render('sellwrite', {title: "물건 판매글 등록"});
+                connection.release();
+            });
+        });
+    });
+});
 
-//});
-
-router.get('/zzim', /*auth,*/ function(req, res){ 
+router.get('/zzim', auth, function(req, res){ // 찜기능 테스트 완료
     console.log(req.body.member_id);
     try {
         pool.getConnection(function(err, connection){
