@@ -24,8 +24,45 @@ router.get('/api', (req, res) => {
   res.send({test: "hi"});
 });
 
-router.get('/api/register', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/', (req,res, next)=>{
+  pool.getConnection(function(err, connection){
+    var sqlForSelectList = "SELECT * FROM products"
+    connection.query(sqlForSelectList, function(err, rows){
+      if (err) console.error("error : "+err);
+      console.log("rows : "+JSON.stringify(rows));
+
+      //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
+      connection.release();
+    })
+    return res.status(200).json({
+      sucess: true
+    }); 
+  })
+})
+
+router.get('/api/users/search',function(req, res, next){
+  //찾을 키워드: req.body.searchwd
+  var search_word = req.body.searchwd
+  console.log(search_word)
+  pool.getConnection(function(err, connection){
+    var sqlForSelectList = "SELECT * FROM products WHERE product_title LIKE "+
+                            connection.escape('%'+search_word+'%') + 
+                            "OR product_content LIKE "+ connection.escape('%'+search_word+'%');
+    connection.query(sqlForSelectList, function(err, rows){
+      if (err) console.error("error : "+err);
+      console.log("rows : " + JSON.stringify(rows));
+
+      //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
+      connection.release();
+      return res.status(200).json({
+        sucess: true
+      }); 
+    })
+  })
+
+})
+router.get('/api/users/register', function(req, res, next) {
+  //res.render(/*가져올 페이지*/ */, { title: 'Express' });
 });
 
 router.post('/api/users/register', function(req, res, next){
@@ -36,7 +73,6 @@ router.post('/api/users/register', function(req, res, next){
   var member_address = req.body.member_address
   var deal_count = 0
   var member_score = 0
-  var member_interest = req.body.member_interest
 
   // 비밀 번호 암호화
   bcrypt.genSalt(saltRounds, function(err, salt){
@@ -44,21 +80,19 @@ router.post('/api/users/register', function(req, res, next){
     bcrypt.hash(member_password, salt, function(err, hash){
       if(err) console.error("bcrypt err: "+err);
       member_password = hash
-      var datas = [member_email, member_password, member_address, deal_count, member_score, member_interest]
+      var datas = [member_email, member_password, member_address, deal_count, member_score]
 
       pool.getConnection(function(err, connection){
-        var sqlForInsertMember = "INSERT INTO members(member_email, member_password, member_address, deal_count, member_score, member_interest) values(?, ?, ?, ?, ?, ?)"
+        var sqlForInsertMember = "INSERT INTO members(member_email, member_password, member_address, deal_count, member_score) values(?, ?, ?, ?, ?)"
           connection.query(sqlForInsertMember, datas, function(err,rows){
             if(err) console.error("err: "+err);
             console.log("rows : "+JSON.stringify(rows));
-            res.redirect('/') //-> board로 redirect
+
+            //res.redirect('/') //-> board로 redirect
             connection.release();
-          
-          /*
-          return res.status(200).json({
-            sucess: true
-          })
-          */
+            return res.status(200).json({
+              sucess: true
+            })
           });
       });
     });
@@ -102,14 +136,11 @@ router.post('/api/users/login', function(req, res){
           if(err) console.error("login_token_update_err: ", err);
           res.cookie("x_auth",token).status(200).json({loginSuccess: true, userId: token})
         });
+        //res.redirect('/') //-> board로 redirect
+        //connection.release();
       });
-      
-      return res.status(200).json({
-        sucess: true
-      }); 
 
-      //res.redirect('/') //-> board로 redirect
-      //connection.release();
+     
     });
   });
 });
@@ -130,9 +161,13 @@ router.get('/api/users/logout', auth, function(req, res){
     var sqlForSelectMember = "Update members SET token=? where member_id=?"
     connection.query(sqlForSelectMember, data, function(err,rows){
       if(err) console.error("err: "+err);
+
+      //res.redirect('/') //-> board로 redirect
+      connection.release();
       return res.status(200).send({
         success: true
       });
+      
     });
   });
 });
