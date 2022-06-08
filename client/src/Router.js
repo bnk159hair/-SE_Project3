@@ -3,6 +3,7 @@ import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 
 import Main from './Main';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 
 const Router = () => {
     return (
@@ -13,6 +14,7 @@ const Router = () => {
             <Route path="/" element={<Main />} />
             <Route path="/page1" element={<Main />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
             {/*Not found */}
             <Route element={()=><Navigate to="/" />} />
         </Routes>

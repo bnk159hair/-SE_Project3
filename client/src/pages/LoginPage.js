@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Redirect} from 'react-router-dom';
+import {Navigate, Link} from 'react-router-dom';
 import axios from 'axios';
 
 import './LoginPage.css';
@@ -22,7 +22,7 @@ const Login = (props) => {
                 if(res.loginSuccess) {
                     // 로그인에 성공한 경우 id를 출력
                     console.log(res.userId);
-                    return <Redirect to='/' />
+                    return <Navigate replace to='/' />
                 }
                 else{
                     // 로그인에 실패한 경우 메시지를 출력
@@ -58,7 +58,7 @@ const Login = (props) => {
                 />
             </form>
             <div class="link">
-                <a href="">회원가입을 혹시 하고싶으신가요??</a>
+                <Link to='/signup'>회원가입을 혹시 하고싶으신가요??</Link>
                 <br />
                 <a href="">비밀번호를 혹시 잊으셨나요??</a>
             </div>

@@ -8,6 +8,16 @@
     margin-top: 40px;
 }
 
+.form-signup{
+    width: 500px;
+    border-radius: 5px;
+    background-color: white;
+
+    padding: 20px;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
 .text_field{
     font-size: 14px;
     margin-bottom: 10px;
@@ -38,6 +48,33 @@
     border: 1px solid black;
 
     color: black
+}
+
+.signUpButtonValid{
+    color: white;
+    font-size: 14px;
+    background-color: black;
+
+    padding: 10px;
+    margin-bottom: 30px;
+
+    border: 1px solid silver;
+    border-radius: 5px;
+
+    width: 100%;
+}
+.signUpButtonInValid{
+    color: white;
+    font-size: 14px;
+    background-color: silver;
+
+    padding: 10px;
+    margin-bottom: 30px;
+
+    border: 1px solid silver;
+    border-radius: 5px;
+
+    width: 100%;
 }
 
 .link{
