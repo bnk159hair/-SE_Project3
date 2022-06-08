@@ -73,33 +73,36 @@ router.get('/sellwrite', auth, function(req, res, next){ //물건 판매하기 �
     res.render('selwrite', {title: "물건 판매글 등록"});
 });
 
-router.post('/selwrite', upload.array('img'), function(req,res){ //데이터 업로드
+router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 업로드
     var product_title = req.body.product_title;
     var product_saler = req.body.product_saler;
     var product_price = req.body.product_price;
     var product_interest = 0;
     var product_state = 0; //판매중: 0
     var product_content = req.body.product_content;
-    var product_image = new array();
-
+    var product_image = new Array();
+    //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
+    
     pool.getConnection(function(err, connection){
-        var sqlForSelectList = "INSERT INTO products(product_title, product_saler,\
-            product_price, product_interest, product_state, product_content) \
-            VALUES (?, ?, ?, ?, ?, ?);"
+        var sqlForSelectList = "INSERT INTO products(product_title, product_saler, product_price, product_interest, product_state, product_content) VALUES (?, ?, ?, ?, ?, ?);"
         datas = [product_title, product_saler, product_price, product_interest, product_state, product_content];
         connection.query(sqlForSelectList, datas, function(err, result){
             if(err) console.error("err : "+err);
             console.log("insert ID : "+JSON.stringify(result.insertId));
             insertID = result.insertId;
             for(let i =0; i<req.files.length; i++){
-                product_image.push([insertID, req.files[i].filename]);
-            }
+            //     product_image.push([insertID, req.files[i].filename]);
+            };
+            // for(let i =0; i<filename.length; i++){
+            //     product_image.push([insertID, filename[i]]);
+            // }
             var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
             connection.query(sqlForPhoto, [product_image], function(err, result){
                 if(err) console.error("err : "+err);
                 console.log("insert ID : "+JSON.stringify(result.insertId));
-                res.render('승건이 사이트', {title: '찜목록', rows:rows});
-            connection.release();
+                
+                res.render('sellwrite', {title: "물건 판매글 등록"});
+                connection.release();
             });
         });
     });
