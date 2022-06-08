@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import axios from 'axios';
+
 import './LoginPage.css';
 
 const SignupPage = () => {
@@ -8,6 +10,8 @@ const SignupPage = () => {
     const [password2, setPassword2] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [checkBoxActive, setCheckBoxActive] = useState(false);
+
+    const isInputValid = userName.length >= 1 && phoneNumber.length >= 1;
 
     // email 주소 유효성 판단
     const isEmailValid = email.includes('@') && email.includes('.');
@@ -24,11 +28,17 @@ const SignupPage = () => {
     const isSignUpButtonValid = isEmailValid && isPasswordValid && checkBoxActive;
 
     const onClickSignUp = () => {
-        if(
-            !isEmailValid ||
-            !isPasswordValid ||
-            !checkBoxActive
-        ){
+        if(isSignUpButtonValid && (password === password2)){
+            /*
+            axios.post('/api/users/register', data={
+                member_email: email,
+                member_password: password,
+                member_address: '',
+                member_interest: '',
+            })
+            */
+        }
+        else{
             alert("개인정보가 올바르지 않습니다.");
         }
     }
