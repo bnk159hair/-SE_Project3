@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Navigate } from 'react-router';
 
 import axios from 'axios';
 
@@ -31,7 +31,12 @@ const SignupPage = () => {
 
     const navigate = useNavigate();
 
+    const onClick = () => {
+        navigate('/', {replace:true});
+    }
+
     const onClickSignUp = () => {
+        var isSuccess = false;
         if(isSignUpButtonValid && (password === password2)){
             axios.post('/api/users/register', {
                 member_email: email,
@@ -39,21 +44,21 @@ const SignupPage = () => {
                 member_address: address,
                 member_score: '',
             }).then(function(res){
-                // console에 response를 출력해 확인한다.
-                console.log(res.data);
                 if(res.data.success){
-                    alert("회원 가입하신 것을 환영합니다!");
-                    navigate("/", {replace: true});
+                    isSuccess = true;
+                    alert("회원 가입에 성공했습니다!");
                 }
                 else{
-                    alert("회원 가입에 실패하셨습니다!");
+                    return alert("회원 가입에 실패하셨습니다!");
                 }
 
             });            
         }
         else{
-            alert("개인정보가 올바르지 않습니다.");
+            return alert("개인정보가 올바르지 않습니다.");
         }
+        // 회원 가입에 성공한 경우 메인 페이지로 이동!
+        navigate("/", {replace: true});
     }
 
 
@@ -137,7 +142,9 @@ const SignupPage = () => {
                 value="회원 가입" 
                 onClick={onClickSignUp}
                 />
+                
             </form>
+            <button onClick={onClick}>go to login page</button>
         </div>
     );
 }

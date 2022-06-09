@@ -24,7 +24,7 @@ const Login = (props) => {
                 // 로그인에 성공한 경우 id를 출력
                 console.log(res.data.userId);
                 alert(res.data);
-                navigate('../go', {replace: true});
+                navigate('/', {replace: true});
             }
             else{
                 // 로그인에 실패한 경우 메시지를 출력
