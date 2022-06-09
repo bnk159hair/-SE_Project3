@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Navigate, Link} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
 import axios from 'axios';
 
 import './LoginPage.css';
@@ -8,28 +8,29 @@ const Login = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const navigate = useNavigate();
+
     const onClickLogin = () => {
         console.log("Login button clicked!");
-        alert('hello');
         console.log(email, password);
-        alert(email);
         axios.post('/api/users/login', {
                member_email: email,
                member_password: password
             }
         )
         .then(function(res) {
-                if(res.loginSuccess) {
-                    // 로그인에 성공한 경우 id를 출력
-                    console.log(res.userId);
-                    return <Navigate replace to='/' />
-                }
-                else{
-                    // 로그인에 실패한 경우 메시지를 출력
-                    alert(res.message);
-                }
+            console.log(res.data.loginSuccess);
+            if(res.data.loginSuccess) {
+                // 로그인에 성공한 경우 id를 출력
+                console.log(res.data.userId);
+                alert(res.data);
+                navigate('../go', {replace: true});
             }
-        )
+            else{
+                // 로그인에 실패한 경우 메시지를 출력
+                alert(res.data.message);
+            }
+        });
     }
 
     return(

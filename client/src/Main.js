@@ -26,7 +26,6 @@ function Main() {
                 <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" />
                 <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" />       
             </div>
-            <Link to='/login'>로그인 이동</Link>
         </div>
     );
 }
