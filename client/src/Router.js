@@ -1,10 +1,11 @@
 import React from 'react';
-import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Main from './Main';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-
+import BuyPage from './pages/BuyPage';
+import SellPage from './pages/SellPage';
 const Router = () => {
     return (
         <Routes>
@@ -15,10 +16,12 @@ const Router = () => {
             <Route path="/page1" element={<Main />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/buypage/*" element={<BuyPage />} />
+            <Route path="/sellpage" element={<SellPage />} />
 
             <Route path="/redirect" element={<Navigate to='/' />} />
             {/*Not found */}
-            <Route element={()=><Navigate to="/" />} />
+            <Route element={() => <Navigate to="/" />} />
         </Routes>
     );
 }

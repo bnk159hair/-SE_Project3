@@ -4,6 +4,7 @@ module.exports = {
         host: 'localhost',
         user: 'root',
         password: '1717',
-        database: 'used_market'
+        database: 'used_market',
+        multipleStatements: true
     }
 }

@@ -48,17 +48,26 @@ router.get('/member_selling', auth, function(req, res){ // 개인판매상품 �
     }
 });
 
-router.get('/info/:idx', auth, function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
-    var idx = req.body.product_id; //승건 참고
+router.get('/info/:idx', /*auth,*/ function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
+    var product_id = req.body.product_id; //승건 참고
+    var member_id = req.body.member_id;
     try {
         pool.getConnection(function(err, connection){
-            var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? "
-            connection.query(sqlForSelectList, req.body.product_id, function(err, rows){
+            var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ;" // 상품 정보 가져오기
+            connection.query(sqlForSelectList, req.body.product_id, function(err, rows){ // rows에 상품 정보 담김
                 if(err) console.error("err : "+err);
                 console.log("rows : "+JSON.stringify(rows));
-
-                res.render('승건이 사이트', {title: '판매목록', rows:rows});
-                connection.release();
+                datas = [member_id, product_id];
+                var checkzzim = "SELECT interest_id FROM interest_products WHERE member_id = ? AND product_id = ?;" // 해당 상품을 고객이 찜했는지
+                connection.query(checkzzim, datas, function(err, zzim_res){
+                    if(err) console.error("err : "+err);
+                    console.log("rows : "+JSON.stringify(zzim_res));
+                    if(zzim_res.length == 0){
+                        console.log("Noop");
+                    }
+                    res.render('승건이 사이트', {title: '판매목록', rows:rows, zzim:zzim_res}); // 두개 반환
+                    connection.release();
+                });
             });
         });
     }
@@ -66,6 +75,65 @@ router.get('/info/:idx', auth, function(req, res){ // 특정 판매상품 구매
         throw e;
     }
 });
+
+router.post('/info/:idx', /*auth,*/ function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
+    var product_id = req.body.product_id; //승건 참고
+    var member_id = req.body.member_id;
+    var zzim_num = req.body.zzim_num; //찜개수 승건이가 넘겨줘야함
+
+    pool.getConnection(function(err, connection){
+        datas = [member_id, product_id];
+        var checkzzim = "SELECT interest_id FROM interest_products WHERE member_id = ? AND product_id = ?;" // 해당 상품을 고객이 찜했는지
+        connection.query(checkzzim, datas, function(err, zzim_res){
+            if(err) console.error("err : "+err);
+            if(zzim_res.length == 0){ //찜을 안한상태일때
+                zzim_num = parseInt(zzim_num)+1;
+                var updatezzim = 
+                "UPDATE products SET product_interest = ? WHERE product_id = ? ; INSERT INTO interest_products(product_id, member_id) VALUES (?, ?); SELECT product_interest FROM products WHERE product_id = ?" // 해당 상품을 고객이 찜했는지
+                add_zzim = [zzim_num, product_id, product_id, member_id, product_id];
+                connection.query(updatezzim, add_zzim, function(err, zzim_res){
+                    if(err) console.error("err : "+err);
+                    console.log("rows : "+JSON.stringify(zzim_res[2]));
+                    res.render('승건이 사이트', {title: '판매목록', zzim:zzim_res}); // 두개 반환
+                    
+                });
+            }else{
+                console.log("Delete zzim");
+                zzim_num = parseInt(zzim_num)-1;
+                var updatezzim = 
+                "UPDATE products SET product_interest = ? WHERE product_id = ? ; DELETE FROM interest_products WHERE member_id = ? AND product_id = ? ; SELECT product_interest FROM products WHERE product_id = ?" // 해당 상품을 고객이 찜했는지
+                add_zzim = [zzim_num, product_id, member_id, product_id, product_id];
+                connection.query(updatezzim, add_zzim, function(err, zzim_res){
+                    if(err) console.error("err : "+err);
+                    console.log("rows : "+JSON.stringify(zzim_res[2]));
+                    res.render('승건이 사이트', {title: '판매목록', zzim:zzim_res}); // 두개 반환
+                });
+            };
+            connection.release();
+
+        });
+    });
+});
+
+router.get('/zzim', auth, function(req, res){ // 찜기능 테스트 완료
+    console.log(req.body.member_id);
+    try {
+        pool.getConnection(function(err, connection){
+            var sqlForSelectList = "SELECT product_id FROM interest_products WHERE member_id = ?"
+            connection.query(sqlForSelectList, req.body.member_id, function(err, rows){
+                if(err) console.error("err : "+err);
+                console.log("rows : "+JSON.stringify(rows));
+
+                res.render('승건이 사이트', {title: '찜목록', rows:rows});
+                connection.release();
+            });
+        });
+    }
+    catch(e){
+        throw e;
+    }
+})
+
 
 router.get('/sellwrite', auth, function(req, res, next){ //물건 판매하기 사이트 불러오기
     var member_id = req.body.member_id;
@@ -91,7 +159,7 @@ router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 �
             console.log("insert ID : "+JSON.stringify(result.insertId));
             insertID = result.insertId;
             for(let i =0; i<req.files.length; i++){
-            //     product_image.push([insertID, req.files[i].filename]);
+                 product_image.push([insertID, req.files[i].filename]);
             };
             // for(let i =0; i<filename.length; i++){
             //     product_image.push([insertID, filename[i]]);
@@ -108,160 +176,5 @@ router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 �
     });
 });
 
-router.get('/zzim', auth, function(req, res){ // 찜기능 테스트 완료
-    console.log(req.body.member_id);
-    try {
-        pool.getConnection(function(err, connection){
-            var sqlForSelectList = "SELECT product_id FROM interest_products WHERE member_id = ?"
-            connection.query(sqlForSelectList, req.body.member_id, function(err, rows){
-                if(err) console.error("err : "+err);
-                console.log("rows : "+JSON.stringify(rows));
-
-                res.render('승건이 사이트', {title: '찜목록', rows:rows});
-                connection.release();
-            });
-        });
-    }
-    catch(e){
-        throw e;
-    }
-})
-
-// router.post('/api/users/auth', auth, function(req,res){
-//     console.log('auth given req.rows: ' + JSON.stringify(req.row))
-//     //auth middle ware를 통과했다는 얘기는 authentication이 성공적으로 되었다는 말
-//     return res.status(200).json({
-//       member_id: req.row.member_id,
-//       member_email: req.row.member_email
-//     });
-//   });
-  
-
-// router.get('/')
-
-
-
-// /* GET home page. */
-// // router.get('/', function(req, res, next) {
-// //   res.render('index', { title: 'Express' });
-// // });
-
-// router.get('/', (req, res) => {
-//   res.send({test: "hi"});
-// })
-
-// router.get('/register', function(req, res, next) {
-//   res.render('index', { title: 'Express' });
-// });
-
-
-
-// router.post('/api/users/register', function(req, res, next){
-//   console.log(req.body)
-
-//   var member_email = req.body.member_email;
-//   var member_password = req.body.member_password;
-//   var member_address = req.body.member_address
-//   var deal_count = 0
-//   var member_score = 0
-//   var member_interest = req.body.member_interest
-
-//   // 비밀 번호 암호화
-//   bcrypt.genSalt(saltRounds, function(err, salt){
-//     if(err) console.error("bcrypt err: "+err);
-//     bcrypt.hash(member_password, salt, function(err, hash){
-//       if(err) console.error("bcrypt err: "+err);
-//       member_password = hash
-//       var datas = [member_email, member_password, member_address, deal_count, member_score, member_interest]
-
-//       pool.getConnection(function(err, connection){
-//         var sqlForInsertMember = "INSERT INTO members(member_email, member_password, member_address, deal_count, member_score, member_interest) values(?, ?, ?, ?, ?, ?)"
-//           connection.query(sqlForInsertMember, datas, function(err,rows){
-//             if(err) console.error("err: "+err);
-//             console.log("rows : "+JSON.stringify(rows));
-//             res.redirect('/') //-> board로 redirect
-//             connection.release();
-          
-//           /*
-//           return res.status(200).json({
-//             sucess: true
-//           })
-//           */
-//           });
-//       });
-//     });
-//   });
-// });
-
-// router.post('/api/users/login', function(req, res){
-//   var member_email= req.body.member_email
-//   var member_password = req.body.member_password
-  
-//   pool.getConnection(function(err, connection){
-//     var sqlForSelectMember = "SELECT * FROM members where member_email = ? "
-//     connection.query(sqlForSelectMember, member_email, function(err,rows){
-//       //요청된 이메일을 데이터베이스에서 있는지 찾는다.
-//       if(err) console.error("err: "+err);
-//       console.log("rows : "+JSON.stringify(rows));
-//       // rows가 어떤 값을 갖는지 보기
-//       // 없다면
-//       console.log(rows.length)
-//       if(rows.length === 0){
-//         return res.json({
-//           loginSucess: false,
-//           message: "제공된 이메일에 해당하는 유저가 없습니다."
-//         })
-//       }
-//       console.log(rows[0].member_password)
-//       //있다면
-//       //요청된 이메일이 데이터베이스에 있다면 비밀번호가 맞는 비밀번호인지 확인
-//       bcrypt.compare(member_password, rows[0].member_password, function(err, isMatch){
-//         if(err) console.error("login_bcrpyt_compare_eror: "+err);
-//         if(!isMatch)
-//         return res.json({ loginSuccess: false, message: "비밀번호가 틀렸습니다."});
-//         //비밀번호 까지 맞다면 토큰을 생성하기.
-//         //jsonwebtoken을 이용해서 token생성
-//         var token = jwt.sign(rows[0].member_id, 'secretToken')
-//         var data = [token, member_email]
-//         var sqlForUpdateMember = "Update members SET token=? WHERE member_email=?"
-//         connection.query(sqlForUpdateMember, data, function(err, result){
-//           // 토큰 저장-> 쿠키 
-//           if(err) console.error("login_token_update_err: ", err);
-//           res.cookie("x_auth",token).status(200).json({loginSuccess: true, userId: token})
-//         });
-//       });
-      
-//       //return res.status(200).json({
-//       //  sucess: true
-//       //}); 
-
-//       //res.redirect('/') //-> board로 redirect
-//       //connection.release();
-//     });
-//   });
-// });
-
-// router.post('/api/users/auth', auth, function(req,res){
-//   console.log('auth given req.rows: ' + JSON.stringify(req.row))
-//   //auth middle ware를 통과했다는 얘기는 authentication이 성공적으로 되었다는 말
-//   return res.status(200).json({
-//     member_id: req.row.member_id,
-//     member_email: req.row.member_email
-//   });
-// });
-
-// router.get('/api/users/logout', auth, function(req, res){
-//   console.log('auth given req.rows: ' + JSON.stringify(req.row));
-//   pool.getConnection(function(err, connection){
-//     var data = ["",req.row.member_id]
-//     var sqlForSelectMember = "Update members SET token=? where member_id=?"
-//     connection.query(sqlForSelectMember, data, function(err,rows){
-//       if(err) console.error("err: "+err);
-//       return res.status(200).send({
-//         success: true
-//       });
-//     });
-//   });
-// });
 
 module.exports = router;

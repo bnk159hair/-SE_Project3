@@ -1,17 +1,43 @@
 
 import styled from 'styled-components';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import BP_ProdInfo from '../components/BP_ProdInfo';
 import BP_ProdImage from '../components/BP_ProdImage';
 import BP_Prod from '../components/BP_Prod';
 import BP_SellerInfo from '../components/BP_SellerInfo';
+import NavBar from '../components/NavBar';
+import axios from 'axios';
 //props : 
 const SellPage = (props) => {
+  //사진등록 추가해야함
+  const [ProductTitle, SetProductTitle] = useState('');
+  const [ProductPrice, SetProductPrice] = useState(0);
+  const [ProductContent, SetProductContent] = useState('');
+  const [ProductSellType, setProductSellType] = useState('');
+  const navigate = useNavigate();
 
+  const onClickWrite = () => {
+
+    console.log("Write button clicked!");
+    alert("상품이 등록되었습니다!")
+    //console.log(ProdId);
+    navigate('/', { replace: true });
+    axios.post('/api/prod/sell', {
+      product_title: ProductTitle,
+      product_price: ProductPrice,
+      product_content: ProductContent,
+      product_sell_type: ProductSellType
+    })
+      .then(function (res) {
+        console.log(res)
+      })
+  }
 
   return (
     <Container>
 
+      <NavBar></NavBar>
       <MainContainer>
         <TitleBox>
           <Title>상품 등록</Title>
@@ -29,7 +55,8 @@ const SellPage = (props) => {
                     type='text'
                     placeholder='상품이름'
                     onChange={(e) => {
-                      alert("아이디입력ㅇ주")
+                      SetProductTitle(e.target.value)
+                      console.log(e.target.value)
                     }}
                   />
                 </td>
@@ -38,10 +65,11 @@ const SellPage = (props) => {
                 <th>가격</th>
                 <td>
                   <input
-                    type='text'
+                    type='number'
                     placeholder='가격'
                     onChange={(e) => {
-                      alert("비번 입력중")
+                      SetProductPrice(e.target.value)
+                      console.log(e.target.value)
                     }}
                   />
                 </td>
@@ -53,7 +81,7 @@ const SellPage = (props) => {
                     type='text'
                     placeholder='나중에 체크박스로 변경예정'
                     onChange={(e) => {
-                      alert("아무튼 입력중")
+                      setProductSellType(e.target.value)
                     }}
                   />
                 </td>
@@ -66,7 +94,7 @@ const SellPage = (props) => {
                     placeholder='ex) 이상품은 어쩌구'
                     height='100px'
                     onChange={(e) => {
-                      alert("아무튼 입력중")
+                      SetProductContent(e.target.value)
                     }}
                   />
                 </td>
@@ -75,7 +103,7 @@ const SellPage = (props) => {
           </table>
         </SignupBox>
         <div>
-          <SignupBtn >글쓰기</SignupBtn>
+          <SignupBtn onClick={onClickWrite}>글쓰기</SignupBtn>
         </div>
       </MainContainer>
     </Container>
