@@ -8,15 +8,23 @@ const NavBar = () => {
 
 
     const onSearch = (e) => {
+        // button 클릭후 페이지 초기화면으로의 이동을 막아줍니다.
         e.preventDefault();
-
+        alert(search);
         // 검색어가 없는 경우 전체 리스트를 반환
         if(search === null || search === ''){
-            axios.get("/api/users/search").then((res) => {
-                
-            });
+            alert('검색어를 입력하세요.');
         }
         else {
+            // params 이용해서 search word를 넘겨준다.
+            axios.get('/api/users/search', {
+                params: {
+                    searchwd: search
+                }
+            }).then((res) => {
+                alert('hello');
+                console.log(res.data);
+            });
         }
     }
 
