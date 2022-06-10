@@ -40,10 +40,10 @@ router.get('/', (req,res, next)=>{
   })
 })
 
-router.get('/api/users/search',function(req, res, next){
+router.post('/api/users/search',function(req, res, next){
   //찾을 키워드: req.body.searchwd
-  var search_word = req.body.searchwd
-  console.log(search_word)
+  var search_word = req.body.searchwd;
+  console.log(req.body)
   pool.getConnection(function(err, connection){
     var sqlForSelectList = "SELECT * FROM products WHERE product_title LIKE "+
                             connection.escape('%'+search_word+'%') + 
@@ -55,7 +55,7 @@ router.get('/api/users/search',function(req, res, next){
       //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
       connection.release();
       return res.status(200).json({
-        sucess: true
+        success: true
       }); 
     })
   })
