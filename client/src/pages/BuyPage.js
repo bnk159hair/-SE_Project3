@@ -1,6 +1,6 @@
 
 import styled from 'styled-components';
-import { useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import BP_ProdInfo from '../components/BP_ProdInfo';
 import BP_ProdImage from '../components/BP_ProdImage';
@@ -14,36 +14,40 @@ const BuyPage = (props) => {
 	const [Seller, SetSeller] = useState('');
 	const [ProductTitle, SetProductTitle] = useState('');
 	const [ProductCategory, SetProductCategory] = useState('');
-	const [ProductState, SetProductState] = useState(0);
+	const [ProductState, SetProductState] = useState('초기화전');
 	const [ProductPrice, SetProductPrice] = useState(0);
 	const [ProductInterest, SetProductInterest] = useState(0);
 	const [ProductLocation, SetProductLocation] = useState(0);
 	const [ProductContent, SetProductContent] = useState('');
 
-	const [DealType, SetDealType] = useState(0);
-
+	let Location = useLocation();
 	const navigate = useNavigate();
+	console.log('location', Location);
+	useEffect(() => {
+		console.log('location', Location);
+	}, [Location]);
+	const ProdId = Location.pathname.split('/').slice(-1)[0];
 
-	// useEffect(() => {
-	// 	console.log('location', Location);
-	// }, [Location]);
-	// const ProdId = Location.pathname.split('/').slice(-1)[0];
-
-	// useEffect(() => {
-	// 	axios.get('/api/prod/' + ProdId).then((res) => {
-	// 		console.log(res.data);
-	// 		SetProductId(res.data[0].product_id);
-	// 		SetSeller(res.data[0].seller);
-	// 		SetProductTitle(res.data[0].product_title);
-	// 		SetProductState(res.data[0].product_state);
-	// 		SetProductCategory(res.data[0].product_category);
-	// 		SetProductPrice(res.data[0].product_price);
-	// 		SetProductInterest(res.data[0].product_interest);
-	// 		SetProductLocation(res.data[0].product_location);
-	// 		SetProductContent(res.data[0].product_content);
-	// 		SetDealType();
-	// 	})
-	// }, [])
+	useEffect(() => {
+		axios.get('/api/prod/' + ProdId).then((res) => {
+			console.log(res.data);
+			SetProductId(res.data[0].product_id);
+			SetSeller(res.data[0].seller);
+			SetProductTitle(res.data[0].product_title);
+			SetProductState();
+			if (res.data[0].product_state == 0)
+				SetProductState('판매중');
+			else if (res.data[0].product_state == 1)
+				SetProductState('예약중');
+			else
+				SetProductState('판매완료');
+			SetProductCategory(res.data[0].product_category);
+			SetProductPrice(res.data[0].product_price);
+			SetProductInterest(res.data[0].product_interest);
+			SetProductLocation(res.data[0].product_location);
+			SetProductContent(res.data[0].product_content);
+		})
+	}, [])
 
 	const onClickBuy = () => {
 		console.log("Buy button clicked!");
