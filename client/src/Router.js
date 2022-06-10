@@ -5,7 +5,7 @@ import Main from './Main';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import BuyPage from './pages/BuyPage';
-
+import SellPage from './pages/SellPage';
 const Router = () => {
     return (
         <Routes>
@@ -17,6 +17,7 @@ const Router = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/buypage/*" element={<BuyPage />} />
+            <Route path="/sellpage" element={<SellPage />} />
 
             <Route path="/redirect" element={<Navigate to='/' />} />
             {/*Not found */}
