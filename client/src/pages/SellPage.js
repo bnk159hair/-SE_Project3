@@ -7,6 +7,7 @@ import BP_ProdImage from '../components/BP_ProdImage';
 import BP_Prod from '../components/BP_Prod';
 import BP_SellerInfo from '../components/BP_SellerInfo';
 import NavBar from '../components/NavBar';
+import axios from 'axios';
 //props : 
 const SellPage = (props) => {
   //사진등록 추가해야함
@@ -17,10 +18,20 @@ const SellPage = (props) => {
   const navigate = useNavigate();
 
   const onClickWrite = () => {
-    alert("상품이 등록되었습니다!")
+
     console.log("Write button clicked!");
+    alert("상품이 등록되었습니다!")
     //console.log(ProdId);
     navigate('/', { replace: true });
+    axios.post('/api/prod/sell', {
+      product_title: ProductTitle,
+      product_price: ProductPrice,
+      product_content: ProductContent,
+      product_sell_type: ProductSellType
+    })
+      .then(function (res) {
+        console.log(res)
+      })
   }
 
   return (
