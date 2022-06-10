@@ -35,8 +35,10 @@ const SignupPage = () => {
         navigate('/', { replace: true });
     }
 
-    const onClickSignUp = () => {
-        var isSuccess = false;
+    const onClickSignUp = (e) => {
+        // submit할 때 페이지 갱신(초기 화면으로의 이동)을 막습니다.
+        e.preventDefault();
+
         if (isSignUpButtonValid && (password === password2)) {
             axios.post('/api/users/register', {
                 member_email: email,
@@ -45,7 +47,6 @@ const SignupPage = () => {
                 member_score: '',
             }).then(function (res) {
                 if (res.data.success) {
-                    isSuccess = true;
                     alert("회원 가입에 성공했습니다!");
                 }
                 else {

@@ -10,7 +10,6 @@ const NavBar = () => {
     const onSearch = (e) => {
         // button 클릭후 페이지 초기화면으로의 이동을 막아줍니다.
         e.preventDefault();
-        alert(search);
         // 검색어가 없는 경우 전체 리스트를 반환
         if(search === null || search === ''){
             alert('검색어를 입력하세요.');
