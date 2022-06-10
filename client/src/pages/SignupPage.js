@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import { useNavigate, Navigate } from 'react-router';
+
 import axios from 'axios';
 
 import './LoginPage.css';
@@ -8,10 +10,10 @@ const SignupPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [address, setAddress] = useState('');
     const [checkBoxActive, setCheckBoxActive] = useState(false);
 
-    const isInputValid = userName.length >= 1 && phoneNumber.length >= 1;
+    const isInputValid = userName.length >= 1 && address.length >= 1;
 
     // email 주소 유효성 판단
     const isEmailValid = email.includes('@') && email.includes('.');
@@ -27,20 +29,36 @@ const SignupPage = () => {
     // 회원 가입 가능 여부 판단.
     const isSignUpButtonValid = isEmailValid && isPasswordValid && checkBoxActive;
 
+    const navigate = useNavigate();
+
+    const onClick = () => {
+        navigate('/', {replace:true});
+    }
+
     const onClickSignUp = () => {
+        var isSuccess = false;
         if(isSignUpButtonValid && (password === password2)){
-            /*
-            axios.post('/api/users/register', data={
+            axios.post('/api/users/register', {
                 member_email: email,
                 member_password: password,
-                member_address: '',
-                member_interest: '',
-            })
-            */
+                member_address: address,
+                member_score: '',
+            }).then(function(res){
+                if(res.data.success){
+                    isSuccess = true;
+                    alert("회원 가입에 성공했습니다!");
+                }
+                else{
+                    return alert("회원 가입에 실패하셨습니다!");
+                }
+
+            });            
         }
         else{
-            alert("개인정보가 올바르지 않습니다.");
+            return alert("개인정보가 올바르지 않습니다.");
         }
+        // 회원 가입에 성공한 경우 메인 페이지로 이동!
+        navigate("/", {replace: true});
     }
 
 
@@ -90,20 +108,25 @@ const SignupPage = () => {
                 required 
                 />
 
-                <div className='InputMessage'>Phone Number *</div>
+                <div className='InputMessage'>Address *</div>
                 <input 
                 className="text_field"
                 type="text"
-                value={phoneNumber}
-                onChange={(event) => {setPhoneNumber(event.target.value);}}
+                value={address}
+                onChange={(event) => {setAddress(event.target.value);}}
                 required
                 />
+                <br />
 
-                <div className="agreeCheckBox">
+                <div className="agreeCheckBox"
+                style={{
+                    "margin-bottom": "20px"
+                }}>
                     <input type="checkbox" />
                     <span className="checkBoxContent">
                         광고성 메시지 수신에 동의합니다.
                     </span>
+                    <br />
                     <input type="checkbox" 
                     onClick={isCheckBoxClicked}
                     />
@@ -119,7 +142,9 @@ const SignupPage = () => {
                 value="회원 가입" 
                 onClick={onClickSignUp}
                 />
+                
             </form>
+            <button onClick={onClick}>go to login page</button>
         </div>
     );
 }

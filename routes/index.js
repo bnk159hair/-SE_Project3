@@ -70,9 +70,8 @@ router.post('/api/users/register', function(req, res, next){
 
   var member_email = req.body.member_email;
   var member_password = req.body.member_password;
-  var member_address = req.body.member_address
-  var deal_count = 0
-  var member_score = 0
+  var member_address = req.body.member_address;
+  var member_score = 0;
 
   // 비밀 번호 암호화
   bcrypt.genSalt(saltRounds, function(err, salt){
@@ -80,18 +79,19 @@ router.post('/api/users/register', function(req, res, next){
     bcrypt.hash(member_password, salt, function(err, hash){
       if(err) console.error("bcrypt err: "+err);
       member_password = hash
-      var datas = [member_email, member_password, member_address, deal_count, member_score]
+      var datas = [member_email, member_password, member_address, member_score]
 
       pool.getConnection(function(err, connection){
-        var sqlForInsertMember = "INSERT INTO members(member_email, member_password, member_address, deal_count, member_score) values(?, ?, ?, ?, ?)"
+        var sqlForInsertMember = "INSERT INTO members(member_email, member_password, member_address, member_score) values(?, ?, ?, ?)"
           connection.query(sqlForInsertMember, datas, function(err,rows){
             if(err) console.error("err: "+err);
             console.log("rows : "+JSON.stringify(rows));
 
             //res.redirect('/') //-> board로 redirect
             connection.release();
+            console.log('success');
             return res.status(200).json({
-              sucess: true
+              success: true
             })
           });
       });
@@ -132,6 +132,7 @@ router.post('/api/users/login', function(req, res){
         var data = [token, member_email]
         var sqlForUpdateMember = "Update members SET token=? WHERE member_email=?"
         connection.query(sqlForUpdateMember, data, function(err, result){
+          console.log(data);
           // 토큰 저장-> 쿠키 
           if(err) console.error("login_token_update_err: ", err);
           res.cookie("x_auth",token).status(200).json({loginSuccess: true, userId: token})

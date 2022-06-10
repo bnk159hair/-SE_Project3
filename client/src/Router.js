@@ -15,6 +15,8 @@ const Router = () => {
             <Route path="/page1" element={<Main />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+
+            <Route path="/redirect" element={<Navigate to='/' />} />
             {/*Not found */}
             <Route element={()=><Navigate to="/" />} />
         </Routes>
