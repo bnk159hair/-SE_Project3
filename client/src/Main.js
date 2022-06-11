@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { Link } from 'react-router-dom';
+import {useCookies} from 'react-cookie';
+
 import './App.css';
 
 import ProductInfo from './components/ProductInfo';
@@ -21,10 +22,10 @@ function Main() {
             <MainImage imageSrc="./images/background1.png" />
 
             <div className="productList">
-                <ProductInfo imageLink="./images/logo192.png" productName="samsung" date="2022/04/05" />
-                <ProductInfo imageLink="./images/logo192.png" productName="apple" date="2001/03/01" /> 
-                <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" />
-                <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" />       
+                <ProductInfo imageLink="./images/logo192.png" productName="samsung" date="2022/04/05" productInterest={3} />
+                <ProductInfo imageLink="./images/logo192.png" productName="apple" date="2001/03/01" productInterest={3} /> 
+                <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" productInterest={3} />
+                <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" productInterest={3} />       
             </div>
         </div>
     );

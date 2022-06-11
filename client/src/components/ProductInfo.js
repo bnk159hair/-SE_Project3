@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 const ProductInfo = (props) => {
-    const [view, countView] = useState(0);
+    const [view, setView] = useState(true);
 
     function countHit(){
-        countView(view + 1);
+        setView(!view);
     }
 
     return (
@@ -20,7 +20,9 @@ const ProductInfo = (props) => {
                     등록일: { props.date }
                 </div>
                 <div>
-                    <button onClick={countHit}>❤</button>조회수: {view}
+                    <button onClick={countHit}>
+                        {view ?  '🤍' : '🖤'}
+                    </button>찜 수: {props.productInterest}
                 </div>
             </div>
         </div>
