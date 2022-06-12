@@ -66,19 +66,20 @@ const NavBar = () => {
                     <input 
                         className="search-button"
                         type='submit'
-                        value=" "
+                        value='❔'
                         style={{
                             "width": "38px",
                             "height": "38px",
-                            "backgroundImage": "url('./images/glass.png')"
+                            "background-color": "black",
+                            "color": "white"
                         }}
                     />
                     </form>
             </div>
             
             <div className="container">
-                <div className="category">Contact</div>
-                <div className="category">Shop</div>
+                <Link to="/" className="category">Home</Link>
+                <Link to="/contact" className="category">Contact</Link>
                 <div className="category">Cart</div>
                 <Link to='/login' className="category">Login</Link>
             </div>

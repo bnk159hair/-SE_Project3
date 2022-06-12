@@ -77,6 +77,18 @@
     width: 100%;
 }
 
+.signUpButtonInValid:hover{
+    cursor: pointer;
+}
+
+.signUpButtonValid:hover{
+    cursor: pointer;
+}
+
+.moveToHome:hover{
+    cursor: pointer;
+}
+
 .link{
     text-align: center;
 }

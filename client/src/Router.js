@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import BuyPage from './pages/BuyPage';
 import SellPage from './pages/SellPage';
+import ContactPage from './pages/ContactPage';
+
 const Router = () => {
     return (
         <Routes>
@@ -18,6 +20,7 @@ const Router = () => {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/buypage/*" element={<BuyPage />} />
             <Route path="/sellpage" element={<SellPage />} />
+            <Route path="/contact" element={<ContactPage />} />
 
             <Route path="/redirect" element={<Navigate to='/' />} />
             {/*Not found */}

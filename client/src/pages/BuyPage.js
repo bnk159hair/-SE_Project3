@@ -6,7 +6,10 @@ import BP_ProdInfo from '../components/BP_ProdInfo';
 import BP_ProdImage from '../components/BP_ProdImage';
 import BP_Prod from '../components/BP_Prod';
 import BP_SellerInfo from '../components/BP_SellerInfo';
+
 import NavBar from '../components/NavBar';
+import Info from '../components/Info';
+
 import axios from 'axios';
 //props : 
 const BuyPage = (props) => {
@@ -62,6 +65,7 @@ const BuyPage = (props) => {
 
 
 	return (
+    <>
 		<>
 			{/* <Header /> */}
 			<NavBar></NavBar>
@@ -103,6 +107,8 @@ const BuyPage = (props) => {
 
 
 		</>
+      <Info />
+    </>
 	);
 }
 

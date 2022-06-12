@@ -15,7 +15,7 @@ body {
   flex-direction: column;
   color: white;
   padding: 20px;
-  padding-bottom: 5px;
+  padding-bottom: 15px;
   font-weight: 500;
   font-size: 20px;
 }
@@ -27,12 +27,13 @@ body {
 }
 
 .category {
+  font-weight: bold;
   color: white;
   text-decoration: none;
 }
 
 .category:hover{
-  text-decoration: underline;
+  color: black;
 }
 
 .search-button:hover {
@@ -86,4 +87,5 @@ li {
 }
 .item:hover {
   text-decoration: underline;
+  background-color: silver;
 }
