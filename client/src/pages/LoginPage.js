@@ -47,6 +47,19 @@ const Login = (props) => {
     return (
         <div className="form-signin">
             <form>
+            <button onClick={() => {
+                navigate('/', { replace: true });
+            }}
+            className="moveToHome"
+            style={{
+                "border": "none",
+                "border-radius": "5px",
+                "background-color": "silver",
+                "color": "white",
+                "padding": "5px"
+            }}>
+                {"<< Home"}
+            </button>
                 <h2>로그인</h2>
                 <input
                     className="text_field"

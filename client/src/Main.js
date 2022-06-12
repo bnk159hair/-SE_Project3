@@ -8,24 +8,16 @@ import NavBar from './components/NavBar';
 import MainImage from './components/MainImage';
 
 function Main() {
-    /*
-    // 아래와 같이 useEffect 함수를 이용하면, 원하는 변수의 state에 따라서만
-    // useEffect의 인자로 받은 함수를 실행한다.
-    useEffect(() => {
-        console.log(count);
-    }, [count]);
-    console.log('rendering');
-    */
     return (
         <div className="App">
             <NavBar imageLink="./images/glass.png"/>
             <MainImage imageSrc="./images/background1.png" />
 
             <div className="productList">
-                <ProductInfo imageLink="./images/logo192.png" productName="samsung" date="2022/04/05" productInterest={3} />
-                <ProductInfo imageLink="./images/logo192.png" productName="apple" date="2001/03/01" productInterest={3} /> 
-                <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" productInterest={3} />
-                <ProductInfo imageLink="./images/logo192.png" productName="korea" date="2021/03/01" productInterest={3} />       
+                <ProductInfo imageLink="./images/logo192.png" productId="1" productName="samsung" date="2022/04/05" productInterest={3} />
+                <ProductInfo imageLink="./images/logo192.png" productId="2" productName="apple" date="2001/03/01" productInterest={3} /> 
+                <ProductInfo imageLink="./images/logo192.png" productId="3" productName="korea" date="2021/03/01" productInterest={3} />
+                <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />       
             </div>
         </div>
     );

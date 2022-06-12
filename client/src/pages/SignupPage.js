@@ -31,10 +31,6 @@ const SignupPage = () => {
 
     const navigate = useNavigate();
 
-    const onClick = () => {
-        navigate('/', { replace: true });
-    }
-
     const onClickSignUp = (e) => {
         // submit할 때 페이지 갱신(초기 화면으로의 이동)을 막습니다.
         e.preventDefault();
@@ -145,7 +141,19 @@ const SignupPage = () => {
                 />
 
             </form>
-            <button onClick={onClick}>go to login page</button>
+            <button onClick={() => {
+                navigate('/', { replace: true });
+            }}
+            className="moveToHome"
+            style={{
+                "border": "none",
+                "border-radius": "5px",
+                "background-color": "silver",
+                "color": "white",
+                "padding": "5px"
+            }}>
+                Home으로 돌아가기
+            </button>
         </div>
     );
 }
