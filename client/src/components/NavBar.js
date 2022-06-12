@@ -78,7 +78,7 @@ const NavBar = () => {
             </div>
             
             <div className="container">
-                <div className="category">Contact</div>
+                <Link to="/contact" className="category">Contact</Link>
                 <div className="category">Shop</div>
                 <div className="category">Cart</div>
                 <Link to='/login' className="category">Login</Link>
