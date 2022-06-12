@@ -6,6 +6,14 @@ const MainImage = (props) => {
             <img src={props.imageSrc}
             width="100%"
             />
+            <div style={{
+                "height": "20px",
+                "background-color": "black",
+                "color": "white",
+                "text-align": "center"
+            }}>
+                WELCOME TO THE JUNGGO NARA
+            </div>
         </div>
     );
 }
