@@ -24,6 +24,7 @@ const BuyPage = (props) => {
   const [ProductLocation, SetProductLocation] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
   const [Z, SetZ] = useState('찜');
+  const [Phone, SetPhone] = useState('010-1234-1234')
 
   let Location = useLocation();
   const navigate = useNavigate();
@@ -35,8 +36,8 @@ const BuyPage = (props) => {
 
   useEffect(() => {
     axios.get('/info/' + ProdId).then((res) => {
-      console.log("res" + JSON.stringify(res.data[0]));
-      console.log("!!" + res.data[0][0].product_id);
+      console.log("re?!s" + JSON.stringify(res));
+      console.log("!!" + res.data);
       SetProductId(res.data[0][0].product_id);
       SetSeller(res.data[0][0].seller);
       SetProductTitle(res.data[0][0].product_title);
@@ -65,7 +66,11 @@ const BuyPage = (props) => {
   const onClickInterest = () => {
     console.log("Interest button clicked!");
     axios.post('/info/' + ProdId).then((res) => {
-      console.log("response" + JSON.stringify(res))
+      console.log("SetZ!!" + JSON.stringify(res));
+      if (Z == '찜')
+        SetZ("찜 해제");
+      else
+        SetZ("찜")
     })
     //navigate('/', { replace: true });
   }

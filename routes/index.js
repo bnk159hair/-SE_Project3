@@ -56,7 +56,7 @@ router.get('/', (req, res, next) => {
 
       sucess: true,
       rows: rows
-    }); 
+    });
   })
 })
 
@@ -221,7 +221,7 @@ router.get('/member_selling', auth, function (req, res) { // 개인판매상품 
   }
 });
 
-router.get('/info/:product_id', /*auth,*/ function (req, res) { // 특정 판매상품 구매페이지 - 테스트 완료
+router.get('/info/:product_id', auth, function (req, res) { // 특정 판매상품 구매페이지 - 테스트 완료
   var product_id = req.params.product_id; //승건 참고
   var member_id = req.row.member_id;
   //var product_id = req.body.product_id; //승건 참고
@@ -231,13 +231,13 @@ router.get('/info/:product_id', /*auth,*/ function (req, res) { // 특정 판매
       var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ;" // 상품 정보 가져오기
       connection.query(sqlForSelectList, product_id, function (err, rows) { // rows에 상품 정보 담김
         if (err) console.error("err : " + err);
-        console.log("rows : " + JSON.stringify(rows));
+        //console.log("rows : " + JSON.stringify(rows));
         var product_saler = rows[0].product_saler;
         datas = [member_id, product_id, product_saler];
         var checkzzim = "SELECT interest_id FROM interest_products WHERE member_id = ? AND product_id = ?; SELECT * FROM members WHERE member_email = ? ;" // 해당 상품을 고객이 찜했는지
         connection.query(checkzzim, datas, function (err, zzim_res) {
           if (err) console.error("err : " + err);
-          console.log("rows : " + JSON.stringify(zzim_res));
+          //console.log("rows : " + JSON.stringify(zzim_res));
           if (zzim_res[0].length == 0) {
             console.log("Noop");
           }
@@ -252,13 +252,10 @@ router.get('/info/:product_id', /*auth,*/ function (req, res) { // 특정 판매
   }
 });
 
-router.post('/info/:product_id', /*auth,*/ function (req, res) { // 찜버튼 눌렀을때 동적으로 반응
+router.post('/info/:product_id', auth, function (req, res) { // 찜버튼 눌렀을때 동적으로 반응
   var product_id = req.params.product_id; //승건 참고
-
-
   var member_id = req.row.member_id;
-  res.send("A");
-
+  console.log("sss" + member_id)
   //var product_id = req.body.product_id; //승건 참고
   //var member_id = req.body.member_id;
 
@@ -277,7 +274,7 @@ router.post('/info/:product_id', /*auth,*/ function (req, res) { // 찜버튼 �
         add_zzim = [zzim_num, product_id, product_id, member_id, product_id];
         connection.query(updatezzim, add_zzim, function (err, zzim_res) {
           if (err) console.error("err : " + err);
-          console.log("rows : " + JSON.stringify(zzim_res[2]));
+          //console.log("rows : " + JSON.stringify(zzim_res[2]));
           res.send(zzim_res); // 두개 반환params
 
         });
