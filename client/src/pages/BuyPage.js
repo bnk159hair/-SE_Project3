@@ -6,6 +6,7 @@ import BP_ProdInfo from '../components/BP_ProdInfo';
 import BP_ProdImage from '../components/BP_ProdImage';
 import BP_Prod from '../components/BP_Prod';
 import BP_SellerInfo from '../components/BP_SellerInfo';
+import { useCookies } from 'react-cookie';
 
 import NavBar from '../components/NavBar';
 import Info from '../components/Info';
@@ -24,6 +25,7 @@ const BuyPage = (props) => {
   const [ProductLocation, SetProductLocation] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
   const [Z, SetZ] = useState('찜');
+  const [Phone, SetPhone] = useState('010-1234-1234')
 
   let Location = useLocation();
   const navigate = useNavigate();
@@ -35,8 +37,8 @@ const BuyPage = (props) => {
 
   useEffect(() => {
     axios.get('/info/' + ProdId).then((res) => {
-      console.log("res" + JSON.stringify(res.data[0]));
-      console.log("!!" + res.data[0][0].product_id);
+      console.log("re?!s" + JSON.stringify(res));
+      console.log("!!" + res.data);
       SetProductId(res.data[0][0].product_id);
       SetSeller(res.data[0][0].seller);
       SetProductTitle(res.data[0][0].product_title);
@@ -71,6 +73,18 @@ const BuyPage = (props) => {
   }
 
 
+  const onClickCor = () => {
+    console.log("cor button clicked!");
+    navigate('/CorPage', { replace: true });
+  }
+
+  const onClickDel = () => {
+
+
+    navigate('/', { replace: true });
+  }
+
+
   return (
     <>
       <>
@@ -101,7 +115,8 @@ const BuyPage = (props) => {
                 </TotalPrice>
                 <ButtonBox>
                   <CartBtn onClick={onClickInterest} >{Z}</CartBtn>
-                  <BuyBtn onClick={onClickBuy} >전화번호 보기</BuyBtn>
+                  <BuyBtn onClick={onClickCor} >수정</BuyBtn>
+                  <BuyBtn onClick={onClickDel} >삭제</BuyBtn>
                 </ButtonBox>
               </InfoBox>
             </ItemInfoBox>
@@ -243,7 +258,7 @@ const BuyBtn = styled.button`
   font-size: 16px;
   border-radius: 4px;
   font-weight: bold;
-  width: 49%;
+  width: 20%;
   background-color: blue;
   color: rgb(255, 255, 255);
   margin: 0;
