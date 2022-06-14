@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/register', registerRouter);
-app.use('/mypage', myPageRouter); // 하영 추가
+app.use('api/mypage', myPageRouter); // 하영 추가
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
