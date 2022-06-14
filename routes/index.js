@@ -38,11 +38,11 @@ const upload = multer({
 router.get('/api', (req, res, next) => {
   console.log("hello");
   pool.getConnection(function (err, connection) {
-    var sqlForSelectList = "SELECT product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
+    var sqlForSelectList = "SELECT product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
     UNION ALL\
-    SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=4 ORDER BY product_interest DESC LIMIT 5) AS T_4\
+    SELECT  product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=4 ORDER BY product_interest DESC LIMIT 5) AS T_4\
     UNION ALL\
-    SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
+    SELECT  product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
     connection.query(sqlForSelectList, function (err, rows) {
       console.log("hello");
 
@@ -51,6 +51,7 @@ router.get('/api', (req, res, next) => {
 
       //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
       connection.release();
+
       return res.status(200).json({
         sucess: true,
         rows: rows
@@ -240,13 +241,13 @@ router.get('/api/info/:product_id', auth, function(req, res){ // 특정 판매�
       var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ;" // 상품 정보 가져오기
       connection.query(sqlForSelectList, product_id, function (err, rows) { // rows에 상품 정보 담김
         if (err) console.error("err : " + err);
-        console.log("rows : " + JSON.stringify(rows));
+        //console.log("rows : " + JSON.stringify(rows));
         var product_saler = rows[0].product_saler;
         datas = [member_id, product_id, product_saler];
         var checkzzim = "SELECT interest_id FROM interest_products WHERE member_id = ? AND product_id = ?; SELECT * FROM members WHERE member_email = ? ;" // 해당 상품을 고객이 찜했는지
         connection.query(checkzzim, datas, function (err, zzim_res) {
           if (err) console.error("err : " + err);
-          console.log("rows : " + JSON.stringify(zzim_res));
+          //console.log("rows : " + JSON.stringify(zzim_res));
           if (zzim_res[0].length == 0) {
             console.log("Noop");
           }
@@ -264,7 +265,6 @@ router.get('/api/info/:product_id', auth, function(req, res){ // 특정 판매�
 router.post('/api/info/:product_id', auth, function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
   var product_id = req.params.product_id; //승건 참고
   var member_id = req.row.member_id;
-
   //var product_id = req.body.product_id; //승건 참고
   //var member_id = req.body.member_id;
 
@@ -283,7 +283,7 @@ router.post('/api/info/:product_id', auth, function(req, res){ // 찜버튼 눌�
         add_zzim = [zzim_num, product_id, product_id, member_id, product_id];
         connection.query(updatezzim, add_zzim, function (err, zzim_res) {
           if (err) console.error("err : " + err);
-          console.log("rows : " + JSON.stringify(zzim_res[2]));
+          //console.log("rows : " + JSON.stringify(zzim_res[2]));
           res.send(zzim_res); // 두개 반환params
 
         });

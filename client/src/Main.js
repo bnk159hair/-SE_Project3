@@ -4,21 +4,34 @@ import {useCookies} from 'react-cookie';
 import './App.css';
 
 import ProductInfo from './components/ProductInfo';
-import NavBar from './components/NavBar';
+import NavBar, {getOnSearch, returnList} from './components/NavBar';
 import MainImage from './components/MainImage';
 import Info from './components/Info';
 import axios from 'axios';
+import {setInfo, getInfo} from './pages/List';
 
 const Main = () => {
-    const [list, setList] = useState([]);
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [isMain, setIsMain] = useState(true);
+    //var information = Array(15);
 
     useEffect(() => {
-        alert('hello')
         axios.get('/api')
         .then(function(res){
-            console.log(res.data.rows);
-            alert('hello');
+            const length = res.data.rows.length;
+            console.log('length: ', length);
+
+            for (var step = 0; step < length; step++){
+                console.log(res.data.rows[step]);
+
+                setInfo(step, res.data.rows[step]);
+            }
+            setIsUpdate(true);
+            console.log(getInfo(2));
+            console.log("is update?", isUpdate);
         });
+        // 검색어 있는 경우 false로 바꿔준다. 없는 경우 true로 바꿔준다.
+        setIsMain(!getOnSearch());
     }, []);
 
     return (
@@ -27,29 +40,33 @@ const Main = () => {
                 <NavBar imageLink="./images/glass.png"/>
                 <MainImage imageSrc="./images/background1.png" />
 
+                {
+                    isMain ? 
+                    "hello" : returnList()
+                }
                 <h2 className="listName">- BEST</h2>
                 <div className="productList">
-                    <ProductInfo imageLink="./images/logo192.png" productId="1" productName="samsung" date="2022/04/05" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="2" productName="apple" date="2001/03/01" productInterest={3} /> 
-                    <ProductInfo imageLink="./images/logo192.png" productId="3" productName="korea" date="2021/03/01" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} /> 
-                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />        
+                    <ProductInfo id={ isUpdate ? getInfo(0).product_id : 0 }imageLink="./images/logo192.png" productId="1" productName={isUpdate ? getInfo(0).product_title : "default"} name={isUpdate ? getInfo(0).product_saler : ""} productInterest={isUpdate ? getInfo(0).product_interest : 0} price={isUpdate ? getInfo(0).product_price : 0}/>
+                    <ProductInfo id={ isUpdate ? getInfo(1).product_id : 0 }imageLink="./images/logo192.png" productId="2" productName={isUpdate ? getInfo(1).product_title : "default"} name={isUpdate ? getInfo(1).product_saler : ""} productInterest={isUpdate ? getInfo(1).product_interest : 0} price={isUpdate ? getInfo(1).product_price : 0}/> 
+                    <ProductInfo id={ isUpdate ? getInfo(2).product_id : 0 }imageLink="./images/logo192.png" productId="3" productName={isUpdate ? getInfo(2).product_title : "default"} name={isUpdate ? getInfo(2).product_saler : ""} productInterest={isUpdate ? getInfo(2).product_interest : 0} price={isUpdate ? getInfo(2).product_price : 0}/>
+                    <ProductInfo id={ isUpdate ? getInfo(3).product_id : 0 }imageLink="./images/logo192.png" productId="4" productName={isUpdate ? getInfo(3).product_title : "default"} name={isUpdate ? getInfo(3).product_saler : ""} productInterest={isUpdate ? getInfo(3).product_interest : 0} price={isUpdate ? getInfo(3).product_price : 0}/> 
+                    <ProductInfo id={ isUpdate ? getInfo(0).product_id : 0 }imageLink="./images/logo192.png" productId="4" productName={isUpdate ? getInfo(2).product_title : "default"} name={isUpdate ? getInfo(2).product_saler : ""} productInterest={isUpdate ? getInfo(2).product_interest : 0} price={isUpdate ? getInfo(2).product_price : 0}/>        
                 </div>
                 <h2 className="listName">- CLOTHES</h2>
                 <div className="productList">
-                    <ProductInfo imageLink="./images/logo192.png" productId="1" productName="samsung" date="2022/04/05" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="2" productName="apple" date="2001/03/01" productInterest={3} /> 
-                    <ProductInfo imageLink="./images/logo192.png" productId="3" productName="korea" date="2021/03/01" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />  
+                    <ProductInfo imageLink="./images/logo192.png" productId="1" productName={isUpdate ? getInfo(0).product_title : "default"} name={isUpdate ? getInfo(0).product_saler : ""} productInterest={isUpdate ? getInfo(0).product_interest : 0} price={isUpdate ? getInfo(0).product_price : 0}/>
+                    <ProductInfo imageLink="./images/logo192.png" productId="2" productName={isUpdate ? getInfo(1).product_title : "default"} name={isUpdate ? getInfo(1).product_saler : ""} productInterest={isUpdate ? getInfo(1).product_interest : 0} price={isUpdate ? getInfo(1).product_price : 0}/> 
+                    <ProductInfo imageLink="./images/logo192.png" productId="3" productName={isUpdate ? getInfo(2).product_title : "default"} name={isUpdate ? getInfo(2).product_saler : ""} productInterest={isUpdate ? getInfo(2).product_interest : 0} price={isUpdate ? getInfo(2).product_price : 0}/>
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName={isUpdate ? getInfo(3).product_title : "default"} name={isUpdate ? getInfo(3).product_saler : ""} productInterest={isUpdate ? getInfo(3).product_interest : 0} price={isUpdate ? getInfo(3).product_price : 0}/> 
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName={isUpdate ? getInfo(2).product_title : "default"} name={isUpdate ? getInfo(2).product_saler : ""} productInterest={isUpdate ? getInfo(2).product_interest : 0} price={isUpdate ? getInfo(2).product_price : 0}/>  
                 </div>
                 <h2 className="listName">- ELECTRIC DEVICE</h2>
                 <div className="productList">
-                    <ProductInfo imageLink="./images/logo192.png" productId="1" productName="samsung" date="2022/04/05" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="2" productName="apple" date="2001/03/01" productInterest={3} /> 
-                    <ProductInfo imageLink="./images/logo192.png" productId="3" productName="korea" date="2021/03/01" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />  
+                    <ProductInfo imageLink="./images/logo192.png" productId="1" productName={isUpdate ? getInfo(0).product_title : "default"} name={isUpdate ? getInfo(0).product_saler : ""} productInterest={isUpdate ? getInfo(0).product_interest : 0} price={isUpdate ? getInfo(0).product_price : 0}/>
+                    <ProductInfo imageLink="./images/logo192.png" productId="2" productName={isUpdate ? getInfo(1).product_title : "default"} name={isUpdate ? getInfo(1).product_saler : ""} productInterest={isUpdate ? getInfo(1).product_interest : 0} price={isUpdate ? getInfo(1).product_price : 0}/> 
+                    <ProductInfo imageLink="./images/logo192.png" productId="3" productName={isUpdate ? getInfo(2).product_title : "default"} name={isUpdate ? getInfo(2).product_saler : ""} productInterest={isUpdate ? getInfo(2).product_interest : 0} price={isUpdate ? getInfo(2).product_price : 0}/>
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName={isUpdate ? getInfo(3).product_title : "default"} name={isUpdate ? getInfo(3).product_saler : ""} productInterest={isUpdate ? getInfo(3).product_interest : 0} price={isUpdate ? getInfo(3).product_price : 0}/> 
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName={isUpdate ? getInfo(2).product_title : "default"} name={isUpdate ? getInfo(2).product_saler : ""} productInterest={isUpdate ? getInfo(2).product_interest : 0} price={isUpdate ? getInfo(2).product_price : 0}/>  
                 </div>
             </div>
             <Info />
