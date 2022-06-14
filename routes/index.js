@@ -34,11 +34,9 @@ const upload = multer({
   }),
 });
 
-router.get('/api', (req, res) => {
-  res.send({ test: "hi" });
-});
 
-router.get('/', (req, res, next) => {
+router.get('/api', (req, res, next) => {
+  console.log("hello");
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
     UNION ALL\
@@ -46,17 +44,21 @@ router.get('/', (req, res, next) => {
     UNION ALL\
     SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
     connection.query(sqlForSelectList, function (err, rows) {
+      console.log("hello");
+
       if (err) console.error("error : " + err);
       console.log("rows : " + JSON.stringify(rows));
 
       //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
       connection.release();
-    })
-    return res.status(200).json({
 
-      sucess: true,
-      rows: rows
-    }); 
+      return res.status(200).json({
+
+        sucess: true,
+        rows: rows
+      }); 
+    })
+    
   })
 })
 
@@ -140,6 +142,7 @@ router.post('/api/users/login', function (req, res) {
           message: "제공된 이메일에 해당하는 유저가 없습니다."
         })
       }
+      
       console.log(rows[0].member_password)
       //있다면
       //요청된 이메일이 데이터베이스에 있다면 비밀번호가 맞는 비밀번호인지 확인
