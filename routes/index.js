@@ -262,12 +262,8 @@ router.get('/info/:product_id', auth, function(req, res){ // 특정 판매상품
 });
 
 router.post('/info/:product_id', auth, function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
-
   var product_id = req.params.product_id; //승건 참고
-
-
   var member_id = req.row.member_id;
-  res.send("A");
 
   //var product_id = req.body.product_id; //승건 참고
   //var member_id = req.body.member_id;
@@ -421,7 +417,88 @@ router.post('/sellupdate', upload.array('img'), function(req,res){ //데이터 �
     });
 });
 
-/////
+router.get('/QnA_list', auth, function(req, res){
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "SELECT qna_title, qna_content FROM qna ;";
+    connection.query(sqlForSelectList, function (err, rows) {
+      if (err) console.error("err : " + err);
+      console.log("rows : " + JSON.stringify(rows[0]));
+
+      res.send(rows);
+      connection.release();
+    });
+  });
+});
+
+router.post('/QnA_write', auth, function(req, res){ // 미완성
+  // pool.getConnection(function (err, connection) {
+  //   var sqlForSelectList = "SELECT qna_title, qna_content FROM qna ;";
+  //   connection.query(sqlForSelectList, function (err, rows) {
+  //     if (err) console.error("err : " + err);
+  //     console.log("rows : " + JSON.stringify(rows[0]));
+
+  //     res.send(rows);
+  //     connection.release();
+  //   });
+  // });
+});
+
+router.get('/notice_list', auth, function(req, res){
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "SELECT notice_title FROM notices ;";
+    connection.query(sqlForSelectList, function (err, rows) {
+      if (err) console.error("err : " + err);
+      console.log("rows : " + JSON.stringify(rows[0]));
+
+      res.send(rows);
+      connection.release();
+    });
+  });
+});
+
+router.get('/notice_list_write', auth, function(req, res){
+  var member_email = req.rows.member_email;
+  //var member_email = req.body.member_email;
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "SELECT admin_id FROM admins WHERE admin_email = ?;";
+    connection.query(sqlForSelectList, member_email, function (err, rows) {
+      if (err) console.error("err : " + err);
+      if(rows == 0){
+        res.send(false);
+      }else{
+        res.send(true);
+      }
+      connection.release();
+    });
+  });
+});
+
+router.post('/notice_list_write', auth, function(req, res){
+  var member_email = req.rows.member_email;
+  var notice_title = req.body.notice_title;
+  var notice_content = req.body.notice_content;
+  //var member_email = req.body.member_email;
+
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "SELECT admin_id FROM admins WHERE admin_email = ?;";
+    connection.query(sqlForSelectList, member_email, function (err, rows) {
+      if (err) console.error("err : " + err);
+      var admin_id = rows[0].admin_id;
+      var datas = [notice_title, admin_id, notice_content];
+      var SQL = "INSERT INTO notices(notice_title, admin_id, notice_content) VALUES (?, ?, ?);"
+
+      connection.query(SQL, datas, function (err, rows) {
+        if (err) console.error("err : " + err);
+        if(rows.insertID != 0) res.send(true);
+        else res.send(false);
+        
+        connection.release();
+      });
+    });
+  });
+});
+
+/////////////////////////////////////////////////////////////////////////////
 
 
 module.exports = router;
