@@ -26,7 +26,11 @@ router.get('/api', (req, res) => {
 
 router.get('/', (req,res, next)=>{
   pool.getConnection(function(err, connection){
-    var sqlForSelectList = "SELECT * FROM products"
+    var sqlForSelectList = "SELECT product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
+    UNION ALL\
+    SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=4 ORDER BY product_interest DESC LIMIT 5) AS T_4\
+    UNION ALL\
+    SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
     connection.query(sqlForSelectList, function(err, rows){
       if (err) console.error("error : "+err);
       console.log("rows : "+JSON.stringify(rows));
