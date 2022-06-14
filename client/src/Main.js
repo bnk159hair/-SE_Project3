@@ -14,7 +14,7 @@ function Main() {
             <div className="App">
                 <NavBar imageLink="./images/glass.png"/>
                 <MainImage imageSrc="./images/background1.png" />
-
+                
                 <h2 className="listName">- BEST</h2>
                 <div className="productList">
                     <ProductInfo imageLink="./images/logo192.png" productId="1" productName="samsung" date="2022/04/05" productInterest={3} />
