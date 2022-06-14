@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+
+
 //mysql 연결
 var mysql = require('mysql');
 const config = require('../config/key');
@@ -22,6 +24,7 @@ const app = require('../app');
 
 //사진 - 하영
 const multer = require('multer');
+const path = require('path');
 //const upload = multer({ dest: 'public/'});
 const upload = multer({
   storage: multer.diskStorage({
@@ -55,7 +58,7 @@ router.get('/api', (req, res, next) => {
       return res.status(200).json({
         sucess: true,
         rows: rows
-      }); 
+      });
     });
   });
 });
@@ -140,7 +143,7 @@ router.post('/api/users/login', function (req, res) {
           message: "제공된 이메일에 해당하는 유저가 없습니다."
         })
       }
-      
+
       console.log(rows[0].member_password)
       //있다면
       //요청된 이메일이 데이터베이스에 있다면 비밀번호가 맞는 비밀번호인지 확인
@@ -194,15 +197,15 @@ router.get('/api/users/logout', auth, function (req, res) {
   });
 });
 
-router.post('/api/users/comment', function(req, res){
+router.post('/api/users/comment', function (req, res) {
   var sender_email = req.body.sender_email;
   var comment = req.body.comment_content;
   var product = req.body.comment_product_id;
-  pool.getConnection(function(err, connection){
+  pool.getConnection(function (err, connection) {
     var data = [sender_email, comment, product];
     var sqlForInsertMember = "INSERT INTO comments(comment_sender_email, comment_content, comment_product_id) values(?, ?, ?)";
-    connection.query(sqlForInsertMember, data, function(err,rows){
-      if(err) console.error("err: "+err);
+    connection.query(sqlForInsertMember, data, function (err, rows) {
+      if (err) console.error("err: " + err);
       connection.release();
       return res.status(200).send({
         Insertion_success: true
@@ -230,6 +233,7 @@ router.get('/api/member_selling', auth, function (req, res) { // 개인판매상
     throw e;
   }
 });
+
 
 router.get('/api/info/:product_id', auth, function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
   var product_id = req.params.product_id; //승건 참고
@@ -261,6 +265,7 @@ router.get('/api/info/:product_id', auth, function(req, res){ // 특정 판매�
     throw e;
   }
 });
+
 
 router.post('/api/info/:product_id', auth, function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
   var product_id = req.params.product_id; //승건 참고
@@ -331,6 +336,7 @@ router.get('/api/sellwrite', auth, function (req, res, next) { //물건 판매�
   res.send();
 });
 
+
 router.post('/api/sellwrite', auth, upload.array('img'), function(req,res){ // 게시글 업로드
   var product_title = req.body.product_title;
   var product_saler = req.row.member_email;
@@ -339,6 +345,7 @@ router.post('/api/sellwrite', auth, upload.array('img'), function(req,res){ // �
   var product_state = 0; //판매중: 0
   var product_content = req.body.product_content;
   var product_image = new Array();
+  console.log("111" + product_saler)
   //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
 
   pool.getConnection(function (err, connection) {
@@ -366,21 +373,23 @@ router.post('/api/sellwrite', auth, upload.array('img'), function(req,res){ // �
   });
 });
 
+
 router.get('/api/sellupdate', auth, function(req, res){ //물건 판매하기 사이트 불러오기
     var product_id = req.query.idx;
 
-    pool.getConnection(function(err, connection){
-      if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
-  
-      var sql = "SELECT * FROM products WHERE product_id = ?";
-      connection.query(sql, product_id, function(err, rows){
-        if(err) console.error(err);
-        console.log("update에서 1개 글 조회 결과 확인 : ", rows);
-        res.send(rows);
-        connection.release();
-      });
+  pool.getConnection(function (err, connection) {
+    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+
+    var sql = "SELECT * FROM products WHERE product_id = ?";
+    connection.query(sql, product_id, function (err, rows) {
+      if (err) console.error(err);
+      console.log("update에서 1개 글 조회 결과 확인 : ", rows);
+      res.send(rows);
+      connection.release();
     });
+  });
 });
+
 
 router.post('/api/sellupdate', upload.array('img'), function(req,res){ //데이터 업로드
     var product_title = req.body.product_title;
@@ -415,6 +424,7 @@ router.post('/api/sellupdate', upload.array('img'), function(req,res){ //데이�
             });
         });
     });
+  });
 });
 
 router.get('/api/QnA_list', auth, function(req, res){
