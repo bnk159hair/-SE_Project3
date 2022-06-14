@@ -38,11 +38,11 @@ const upload = multer({
 router.get('/api', (req, res, next) => {
   console.log("hello");
   pool.getConnection(function (err, connection) {
-    var sqlForSelectList = "SELECT product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
+    var sqlForSelectList = "SELECT product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
     UNION ALL\
-    SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=4 ORDER BY product_interest DESC LIMIT 5) AS T_4\
+    SELECT  product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=4 ORDER BY product_interest DESC LIMIT 5) AS T_4\
     UNION ALL\
-    SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
+    SELECT  product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
     connection.query(sqlForSelectList, function (err, rows) {
       console.log("hello");
 

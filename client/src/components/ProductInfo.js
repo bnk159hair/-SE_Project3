@@ -10,7 +10,7 @@ const ProductInfo = (props) => {
 
     return (
         <div className="item">
-            <Link to={'/buypage/' + props.productId}
+            <Link to={'/buypage/' + props.id}
             style={{
                 "text-decoration": "none",
                 "color": "black"
@@ -24,7 +24,10 @@ const ProductInfo = (props) => {
                     상품명: { props.productName }
                 </div>
                 <div>
-                    등록일: { props.date }
+                    판매자: { props.name }
+                </div>
+                <div>
+                    가격: { props.price }
                 </div>
                 <div>
                     <button onClick={countHit}>
