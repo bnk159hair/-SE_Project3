@@ -15,19 +15,30 @@ function Main() {
                 <NavBar imageLink="./images/glass.png"/>
                 <MainImage imageSrc="./images/background1.png" />
 
+                <h2 className="listName">- BEST</h2>
                 <div className="productList">
                     <ProductInfo imageLink="./images/logo192.png" productId="1" productName="samsung" date="2022/04/05" productInterest={3} />
                     <ProductInfo imageLink="./images/logo192.png" productId="2" productName="apple" date="2001/03/01" productInterest={3} /> 
                     <ProductInfo imageLink="./images/logo192.png" productId="3" productName="korea" date="2021/03/01" productInterest={3} />
-                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />       
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} /> 
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />        
                 </div>
+                <h2 className="listName">- CLOTHES</h2>
                 <div className="productList">
                     <ProductInfo imageLink="./images/logo192.png" productId="1" productName="samsung" date="2022/04/05" productInterest={3} />
                     <ProductInfo imageLink="./images/logo192.png" productId="2" productName="apple" date="2001/03/01" productInterest={3} /> 
                     <ProductInfo imageLink="./images/logo192.png" productId="3" productName="korea" date="2021/03/01" productInterest={3} />
                     <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />  
                 </div>
-                
+                <h2 className="listName">- ELECTRIC DEVICE</h2>
+                <div className="productList">
+                    <ProductInfo imageLink="./images/logo192.png" productId="1" productName="samsung" date="2022/04/05" productInterest={3} />
+                    <ProductInfo imageLink="./images/logo192.png" productId="2" productName="apple" date="2001/03/01" productInterest={3} /> 
+                    <ProductInfo imageLink="./images/logo192.png" productId="3" productName="korea" date="2021/03/01" productInterest={3} />
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />
+                    <ProductInfo imageLink="./images/logo192.png" productId="4" productName="korea" date="2021/03/01" productInterest={3} />  
+                </div>
             </div>
             <Info />
         </div>

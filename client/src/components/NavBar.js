@@ -1,5 +1,6 @@
 import axios from 'axios';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+
 import {Cookies} from 'react-cookie';
 
 import { Link } from 'react-router-dom';
@@ -9,6 +10,7 @@ const cookies = new Cookies();
 const NavBar = () => {
     // 검색어 저장
     const [search, setSearch] = useState('');
+
 
     const loginCookie = cookies.get('login')
 
@@ -81,7 +83,10 @@ const NavBar = () => {
                 <Link to="/" className="category">Home</Link>
                 <Link to="/contact" className="category">Contact</Link>
                 <div className="category">Cart</div>
-                <Link to='/login' className="category">Login</Link>
+                <Link to='/sellpage' className="category">Sell</Link>
+                <Link to={loginCookie ? '/mypage' : '/login'} className="category">
+                    {loginCookie ? "My Page" : "Login"}
+                </Link>
             </div>
         </div>
     );
