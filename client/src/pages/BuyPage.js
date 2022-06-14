@@ -13,103 +13,110 @@ import Info from '../components/Info';
 import axios from 'axios';
 //props : 
 const BuyPage = (props) => {
-	const [ProductId, SetProductId] = useState('');
-	const [Seller, SetSeller] = useState('');
-	const [ProductTitle, SetProductTitle] = useState('');
-	const [ProductCategory, SetProductCategory] = useState('');
-	const [ProductState, SetProductState] = useState('초기화전');
-	const [ProductPrice, SetProductPrice] = useState(0);
-	const [ProductInterest, SetProductInterest] = useState(0);
-	const [ProductLocation, SetProductLocation] = useState(0);
-	const [ProductContent, SetProductContent] = useState('');
+  const [ProductId, SetProductId] = useState('');
+  const [Seller, SetSeller] = useState('');
+  const [Score, SetScore] = useState(0);
+  const [ProductTitle, SetProductTitle] = useState('');
+  const [ProductCategory, SetProductCategory] = useState('');
+  const [ProductState, SetProductState] = useState('초기화전');
+  const [ProductPrice, SetProductPrice] = useState(0);
+  const [ProductInterest, SetProductInterest] = useState(0);
+  const [ProductLocation, SetProductLocation] = useState(0);
+  const [ProductContent, SetProductContent] = useState('');
+  const [Z, SetZ] = useState('찜');
 
-	let Location = useLocation();
-	const navigate = useNavigate();
-	console.log('location', Location);
-	useEffect(() => {
-		console.log('location', Location);
-	}, [Location]);
-	const ProdId = Location.pathname.split('/').slice(-1)[0];
+  let Location = useLocation();
+  const navigate = useNavigate();
+  console.log('location', Location);
+  useEffect(() => {
+    console.log('location', Location);
+  }, [Location]);
+  const ProdId = Location.pathname.split('/').slice(-1)[0];
 
-	useEffect(() => {
-		axios.get('/api/prod/' + ProdId).then((res) => {
-			console.log(res.data);
-			SetProductId(res.data[0].product_id);
-			SetSeller(res.data[0].seller);
-			SetProductTitle(res.data[0].product_title);
-			SetProductState();
-			if (res.data[0].product_state == 0)
-				SetProductState('판매중');
-			else if (res.data[0].product_state == 1)
-				SetProductState('예약중');
-			else
-				SetProductState('판매완료');
-			SetProductCategory(res.data[0].product_category);
-			SetProductPrice(res.data[0].product_price);
-			SetProductInterest(res.data[0].product_interest);
-			SetProductLocation(res.data[0].product_location);
-			SetProductContent(res.data[0].product_content);
-		})
-	}, [])
+  useEffect(() => {
+    axios.get('/info/' + ProdId).then((res) => {
+      console.log("res" + JSON.stringify(res.data[0]));
+      console.log("!!" + res.data[0][0].product_id);
+      SetProductId(res.data[0][0].product_id);
+      SetSeller(res.data[0][0].seller);
+      SetProductTitle(res.data[0][0].product_title);
+      SetProductState();
+      if (res.data[0][0].product_state == 0)
+        SetProductState('판매중');
+      else if (res.data[0][0].product_state == 1)
+        SetProductState('예약중');
+      else
+        SetProductState('판매완료');
+      SetProductCategory(res.data[0][0].product_category);
+      SetProductPrice(res.data[0][0].product_price);
+      SetProductInterest(res.data[0][0].product_interest);
+      SetProductLocation(res.data[0][0].product_location);
+      SetProductContent(res.data[0][0].product_content);
+      SetSeller(res.data[1][0].member_email)
+      SetScore(res.data[1][0].member_score)
+      //console.log("!!!!" + res.data[1][0].member_email)
+    })
+  }, [])
 
-	const onClickBuy = () => {
-		console.log("Buy button clicked!");
-		//console.log(ProdId);
-		navigate('/', { replace: true });
-	}
-	const onClickInterest = () => {
-		console.log("Interest button clicked!");
-		//console.log(ProdId);
-		navigate('/', { replace: true });
-	}
+  const onClickBuy = () => {
+    console.log("Buy button clicked!");
+    navigate('/', { replace: true });
+  }
+  const onClickInterest = () => {
+    console.log("Interest button clicked!");
+    axios.post('/info/' + ProdId).then((res) => {
+      console.log("response" + JSON.stringify(res))
+    })
+    //navigate('/', { replace: true });
+  }
 
 
-	return (
+  return (
     <>
-		<>
-			{/* <Header /> */}
-			<NavBar></NavBar>
-			<Container>
-				<ItemBox>
-					<ImgBox>
-						<img src="./images/logo192.png" alt='상품이미지' />
-					</ImgBox>
-					<ItemInfoBox>
-						<InfoBox>
-							<BP_SellerInfo prof_image="./images/logo192.png" prof_name="김개똥" prof_stars="3" prof_sc="100">
+      <>
+        {/* <Header /> */}
+        <NavBar></NavBar>
+        <Container>
+          <ItemBox>
+            <ImgBox>
+              <img src="./images/logo192.png" alt='상품이미지' />
+            </ImgBox>
+            <ItemInfoBox>
+              <InfoBox>
+                <BP_SellerInfo prof_image="./images/logo192.png" prof_name={Seller} prof_stars={Score} prof_sc="100">
 
-							</BP_SellerInfo>
-							<p>{ProductTitle}</p>
-							<PriceBox>
-								<span>
-									{ProductPrice}
-									<small>원</small>
-								</span>
-							</PriceBox>
+                </BP_SellerInfo>
+                <p>{ProductTitle}</p>
+                <PriceBox>
+                  <span>
+                    {ProductPrice}
+                    <small>원</small>
+                  </span>
+                </PriceBox>
 
-							<TotalPrice>
-								<span>
-									거래상태 <strong>{ProductState}</strong>
-								</span>
-							</TotalPrice>
-							<ButtonBox>
-								<CartBtn onClick={onClickInterest} >찜</CartBtn>
-								<BuyBtn onClick={onClickBuy} >바로 구매하기</BuyBtn>
-							</ButtonBox>
-						</InfoBox>
-					</ItemInfoBox>
-				</ItemBox>
-				<ProdMain>
-					{ProductContent}
+                <TotalPrice>
+                  <span>
+                    거래상태 <strong>{ProductState}</strong>
+                  </span>
+                </TotalPrice>
+                <ButtonBox>
+                  <CartBtn onClick={onClickInterest} >{Z}</CartBtn>
+                  <BuyBtn onClick={onClickBuy} >전화번호 보기</BuyBtn>
+                </ButtonBox>
+              </InfoBox>
+            </ItemInfoBox>
+          </ItemBox>
+          <ProdMain>
+            {ProductContent}
 
-				</ProdMain>
-			</Container>
+          </ProdMain>
+        </Container>
 
 
-		</>
+      </>
       <Info />
     </>
-	);
+  );
 }
 
 const ProdMain = styled.div`
