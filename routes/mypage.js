@@ -34,7 +34,7 @@ router.get('/member_selling', auth, function(req, res){ // 개인판매상품 �
     try {
         pool.getConnection(function(err, connection){
             var sqlForSelectList = "SELECT * FROM products WHERE product_saler = ? ;";
-            connection.query(sqlForSelectList, req.body.product_saler, function(err, rows){
+            connection.query(sqlForSelectList, req.params.product_saler, function(err, rows){
                 if(err) console.error("err : "+err);
                 console.log("rows : "+JSON.stringify(rows[0]));
 
@@ -49,23 +49,28 @@ router.get('/member_selling', auth, function(req, res){ // 개인판매상품 �
 });
 
 router.get('/info/:product_id', /*auth,*/ function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
+    // var product_id = req.params.product_id; //승건 참고
+    // var member_id = req.row.member_id;
+    // var member_email = req.row.member_email;
     var product_id = req.body.product_id; //승건 참고
     var member_id = req.body.member_id;
+    var member_email = req.body.member_email;
     try {
         pool.getConnection(function(err, connection){
             var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ;" // 상품 정보 가져오기
-            connection.query(sqlForSelectList, req.body.product_id, function(err, rows){ // rows에 상품 정보 담김
+            connection.query(sqlForSelectList, req.params.product_id, function(err, rows){ // rows에 상품 정보 담김
                 if(err) console.error("err : "+err);
                 console.log("rows : "+JSON.stringify(rows));
-                datas = [member_id, product_id];
-                var checkzzim = "SELECT interest_id FROM interest_products WHERE member_id = ? AND product_id = ?;" // 해당 상품을 고객이 찜했는지
+                var product_saler = rows[0].product_saler;
+                datas = [member_id, product_id, product_saler];
+                var checkzzim = "SELECT interest_id FROM interest_products WHERE member_id = ? AND product_id = ?; SELECT * FROM members WHERE member_email = ? ;" // 해당 상품을 고객이 찜했는지
                 connection.query(checkzzim, datas, function(err, zzim_res){
                     if(err) console.error("err : "+err);
                     console.log("rows : "+JSON.stringify(zzim_res));
-                    if(zzim_res.length == 0){
+                    if(zzim_res[0].length == 0){
                         console.log("Noop");
                     }
-                    res.send(rows, zzim_res); // 두개 반환
+                    res.send([rows, zzim_res]); // 두개 반환
                     connection.release();
                 });
             });
@@ -78,7 +83,7 @@ router.get('/info/:product_id', /*auth,*/ function(req, res){ // 특정 판매�
 
 router.post('/info/:product_id', /*auth,*/ function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
     var product_id = req.body.product_id; //승건 참고
-    var member_id = req.body.member_id;
+    var member_id = req.row.member_id;
     var zzim_num = req.body.zzim_num; //찜개수 승건이가 넘겨줘야함
 
     pool.getConnection(function(err, connection){
@@ -88,19 +93,19 @@ router.post('/info/:product_id', /*auth,*/ function(req, res){ // 찜버튼 눌�
             if(err) console.error("err : "+err);
             if(zzim_res.length == 0){ //찜을 안한상태일때
                 zzim_num = parseInt(zzim_num)+1;
-                var updatezzim = 
+                var updatezzim =
                 "UPDATE products SET product_interest = ? WHERE product_id = ? ; INSERT INTO interest_products(product_id, member_id) VALUES (?, ?); SELECT product_interest FROM products WHERE product_id = ?" // 해당 상품을 고객이 찜했는지
                 add_zzim = [zzim_num, product_id, product_id, member_id, product_id];
                 connection.query(updatezzim, add_zzim, function(err, zzim_res){
                     if(err) console.error("err : "+err);
                     console.log("rows : "+JSON.stringify(zzim_res[2]));
-                    res.send(zzim_res); // 두개 반환
-                    
+                    res.send(zzim_res); // 두개 반환params
+
                 });
             }else{
                 console.log("Delete zzim");
                 zzim_num = parseInt(zzim_num)-1;
-                var updatezzim = 
+                var updatezzim =
                 "UPDATE products SET product_interest = ? WHERE product_id = ? ; DELETE FROM interest_products WHERE member_id = ? AND product_id = ? ; SELECT product_interest FROM products WHERE product_id = ?" // 해당 상품을 고객이 찜했는지
                 add_zzim = [zzim_num, product_id, member_id, product_id, product_id];
                 connection.query(updatezzim, add_zzim, function(err, zzim_res){
@@ -116,11 +121,11 @@ router.post('/info/:product_id', /*auth,*/ function(req, res){ // 찜버튼 눌�
 });
 
 router.get('/zzim', auth, function(req, res){ // 찜기능 테스트 완료
-    console.log(req.body.member_id);
+    console.log(req.row.member_id);
     try {
         pool.getConnection(function(err, connection){
             var sqlForSelectList = "SELECT product_id FROM interest_products WHERE member_id = ?"
-            connection.query(sqlForSelectList, req.body.member_id, function(err, rows){
+            connection.query(sqlForSelectList, req.row.member_id, function(err, rows){
                 if(err) console.error("err : "+err);
                 console.log("rows : "+JSON.stringify(rows));
 
@@ -136,7 +141,7 @@ router.get('/zzim', auth, function(req, res){ // 찜기능 테스트 완료
 
 
 router.get('/sellwrite', auth, function(req, res, next){ //물건 판매하기 사이트 불러오기
-    var member_id = req.body.member_id;
+    var member_id = req.params.member_id;
 
     res.send();
 });
@@ -150,7 +155,7 @@ router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 �
     var product_content = req.body.product_content;
     var product_image = new Array();
     //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
-    
+
     pool.getConnection(function(err, connection){
         var sqlForSelectList = "INSERT INTO products(product_title, product_saler, product_price, product_interest, product_state, product_content) VALUES (?, ?, ?, ?, ?, ?);"
         datas = [product_title, product_saler, product_price, product_interest, product_state, product_content];
@@ -168,7 +173,7 @@ router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 �
             connection.query(sqlForPhoto, [product_image], function(err, result){
                 if(err) console.error("err : "+err);
                 console.log("insert ID : "+JSON.stringify(result.insertId));
-                
+
                 res.send('Success');
                 connection.release();
             });
@@ -191,7 +196,7 @@ router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 �
 //     var product_content = req.body.product_content;
 //     var product_image = new Array();
 //     //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
-    
+
 //     pool.getConnection(function(err, connection){
 //         var sqlForSelectList = "INSERT INTO products(product_title, product_saler, product_price, product_interest, product_state, product_content) VALUES (?, ?, ?, ?, ?, ?);"
 //         datas = [product_title, product_saler, product_price, product_interest, product_state, product_content];
@@ -209,7 +214,7 @@ router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 �
 //             connection.query(sqlForPhoto, [product_image], function(err, result){
 //                 if(err) console.error("err : "+err);
 //                 console.log("insert ID : "+JSON.stringify(result.insertId));
-                
+
 //                 res.render('sellwrite', {title: "물건 판매글 등록"});
 //                 connection.release();
 //             });
