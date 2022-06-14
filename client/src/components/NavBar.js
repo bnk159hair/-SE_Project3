@@ -11,18 +11,16 @@ const NavBar = () => {
     // 검색어 저장
     const [search, setSearch] = useState('');
 
-
-    const loginCookie = cookies.get('login')
+    const [loginCookie, setLoginCookie] = useState(cookies.get('login'));
 
     const onSearch = (e) => {
         // button 클릭후 페이지 초기화면으로의 이동을 막아줍니다.
         e.preventDefault();
-        // cookie 가져오기 성공
-        alert(loginCookie);
         
         // 검색어가 없는 경우 전체 리스트를 반환
         if(search === null || search === ''){
             alert('검색어를 입력하세요.');
+            alert(loginCookie);
         }
         else {
             // params 이용해서 search word를 넘겨준다.
@@ -30,8 +28,11 @@ const NavBar = () => {
                 searchwd: search
             }).then((res) => {
                 // 상품 정보 가져오는 부분 아직 미구현
-                alert(res.data.success);
+                console.log(res.data.rows[0]);
+                alert(res.data.rows[0].product_title);
             });
+
+            
         }
     }
 
@@ -40,19 +41,25 @@ const NavBar = () => {
         setSearch(e.target.value);
     }
 
+    const clickSell = () =>{
+        if(loginCookie === false){
+            alert('로그인부터 하십쇼!');
+        }
+    }
+
     return (
         <div className="nav-bar">
             <div className="nav-head">
                 <form onSubmit={e => onSearch(e)}>
-                <Link to='/'
-                style={{
-                    "font-size": "25px",
-                    "font-weight": "700",
-                    "text-decoration": "none",
-                    "color": "black"
-                }}>
-                    JUNGGO NARA
-                </Link>
+                    <Link to='/'
+                    style={{
+                        "font-size": "25px",
+                        "font-weight": "700",
+                        "text-decoration": "none",
+                        "color": "black"
+                    }}>
+                        JUNGGO NARA
+                    </Link>
                     <input type="text"
                     placeholder="검색어를 입력하세요"
                     style={{
@@ -75,19 +82,20 @@ const NavBar = () => {
                             "background-color": "black",
                             "color": "white"
                         }}
-                    />
-                    </form>
+                    />                    
+                </form>
             </div>
             
             <div className="container">
                 <Link to="/" className="category">Home</Link>
                 <Link to="/contact" className="category">Contact</Link>
                 <div className="category">Cart</div>
-                <Link to='/sellpage' className="category">Sell</Link>
+                <Link to={loginCookie ? '/sellpage' : '/login'} className="category" onClick={clickSell}>Sell</Link>
                 <Link to={loginCookie ? '/mypage' : '/login'} className="category">
                     {loginCookie ? "My Page" : "Login"}
                 </Link>
             </div>
+            
         </div>
     );
 }

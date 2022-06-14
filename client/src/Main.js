@@ -7,8 +7,20 @@ import ProductInfo from './components/ProductInfo';
 import NavBar from './components/NavBar';
 import MainImage from './components/MainImage';
 import Info from './components/Info';
+import axios from 'axios';
 
-function Main() {
+const Main = () => {
+    const [list, setList] = useState([]);
+
+    useEffect(() => {
+        alert('hello')
+        axios.get('/api')
+        .then(function(res){
+            console.log(res.data.rows);
+            alert('hello');
+        });
+    }, []);
+
     return (
         <div>
             <div className="App">
