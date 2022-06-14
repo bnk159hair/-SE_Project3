@@ -335,14 +335,15 @@ router.post('/api/upload', upload.array('img'), (req, res) => {
 })
 
 
-router.post('/api/sellwrite', upload.array('img'), function (req, res) { //데이터 업로드
+router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { // 게시글 업로드
   var product_title = req.body.product_title;
-  var product_saler = req.body.product_saler;
+  var product_saler = req.row.member_email;
   var product_price = req.body.product_price;
   var product_interest = 0;
   var product_state = 0; //판매중: 0
   var product_content = req.body.product_content;
   var product_image = new Array();
+  console.log("111" + product_saler)
   //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
 
   pool.getConnection(function (err, connection) {
