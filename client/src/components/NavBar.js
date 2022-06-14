@@ -31,6 +31,8 @@ const NavBar = () => {
                 console.log(res.data.rows[0]);
                 alert(res.data.rows[0].product_title);
             });
+
+            
         }
     }
 
@@ -49,15 +51,15 @@ const NavBar = () => {
         <div className="nav-bar">
             <div className="nav-head">
                 <form onSubmit={e => onSearch(e)}>
-                <Link to='/'
-                style={{
-                    "font-size": "25px",
-                    "font-weight": "700",
-                    "text-decoration": "none",
-                    "color": "black"
-                }}>
-                    JUNGGO NARA
-                </Link>
+                    <Link to='/'
+                    style={{
+                        "font-size": "25px",
+                        "font-weight": "700",
+                        "text-decoration": "none",
+                        "color": "black"
+                    }}>
+                        JUNGGO NARA
+                    </Link>
                     <input type="text"
                     placeholder="검색어를 입력하세요"
                     style={{
@@ -81,7 +83,7 @@ const NavBar = () => {
                             "color": "white"
                         }}
                     />                    
-                    </form>
+                </form>
             </div>
             
             <div className="container">
