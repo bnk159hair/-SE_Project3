@@ -53,7 +53,8 @@ router.get('/', (req,res, next)=>{
       connection.release();
     })
     return res.status(200).json({
-      sucess: true
+      sucess: true,
+      rows: rows
     }); 
   })
 })
