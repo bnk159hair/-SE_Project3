@@ -15,20 +15,48 @@ const SellPage = (props) => {
   const [ProductPrice, SetProductPrice] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
   const [ProductSellType, setProductSellType] = useState('');
+  const [img, setImage] = useState(null);
   const navigate = useNavigate();
+  const formData = new FormData();
+
+  const onChange = (e) => {
+    console.log(e.target.files[0]);
+    setImage(e.target.files[0]);
+  }
+
+  const onClick = async () => {
+
+    const config = {
+      header: { 'Content-Type': 'multipart/form-data' }
+    };
+
+
+    const fd = new FormData();
+    console.log(img)
+    fd.append('img', img);
+    fd.append('img', img);
+    // 서버의 upload API 호출
+    console.log(fd);
+    axios.post('http://localhost:3000/api/upload', fd, config).then((res) => {
+
+      console.log(res);
+    });
+
+  };
+
 
   const onClickWrite = () => {
+    const formData = new FormData();
+    formData.append('img', img);
+    formData.append('product_title', ProductTitle);
+    formData.append('product_price', ProductPrice);
+    formData.append('product_content', ProductContent);
 
     console.log("Write button clicked!");
     alert("상품이 등록되었습니다!")
     //console.log(ProdId);
     navigate('/', { replace: true });
-    axios.post('/api/prod/sell', {
-      product_title: ProductTitle,
-      product_price: ProductPrice,
-      product_content: ProductContent,
-      product_sell_type: ProductSellType
-    })
+    axios.post('http://localhost:3000/api/sellwrite', formData)
       .then(function (res) {
         console.log(res)
       })
@@ -36,7 +64,6 @@ const SellPage = (props) => {
 
   return (
     <Container>
-
       <NavBar></NavBar>
       <MainContainer>
         <TitleBox>
@@ -75,14 +102,15 @@ const SellPage = (props) => {
                 </td>
               </tr>
               <tr>
-                <th>거래유형</th>
+                <th>사진</th>
                 <td>
                   <input
-                    type='text'
-                    placeholder='나중에 체크박스로 변경예정'
-                    onChange={(e) => {
-                      setProductSellType(e.target.value)
-                    }}
+                    type='file'
+                    display='none'
+                    name='file'
+                    accept='image/*'
+                    onChange={onChange}
+                    multiple
                   />
                 </td>
               </tr>

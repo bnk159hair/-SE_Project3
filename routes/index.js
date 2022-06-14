@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+
+
 //mysql 연결
 var mysql = require('mysql');
 const config = require('../config/key');
@@ -22,6 +24,7 @@ const app = require('../app');
 
 //사진 - 하영
 const multer = require('multer');
+const path = require('path');
 //const upload = multer({ dest: 'public/'});
 const upload = multer({
   storage: multer.diskStorage({
@@ -322,7 +325,17 @@ router.get('/sellwrite', auth, function (req, res, next) { //물건 판매하기
   res.send();
 });
 
-router.post('/sellwrite', upload.array('img'), function (req, res) { //데이터 업로드
+router.post('/api/upload', upload.array('img'), (req, res) => {
+
+  console.log("!!!@!@!@" + req);
+  for (let i = 0; i < req.files.length; i++) {
+    console.log(req.files[i].filename);
+  };
+  res.send('Success');
+})
+
+
+router.post('/api/sellwrite', upload.array('img'), function (req, res) { //데이터 업로드
   var product_title = req.body.product_title;
   var product_saler = req.body.product_saler;
   var product_price = req.body.product_price;
