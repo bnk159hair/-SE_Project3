@@ -81,6 +81,7 @@ const NavBar = () => {
                 <Link to="/" className="category">Home</Link>
                 <Link to="/contact" className="category">Contact</Link>
                 <div className="category">Cart</div>
+                <Link to='/sellpage' className="category">Sell</Link>
                 <Link to='/login' className="category">Login</Link>
             </div>
         </div>
