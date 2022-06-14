@@ -51,8 +51,8 @@ li {
 
 .pro_image {
   margin: 20px;
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
   border: 1px solid black;
 }
 
@@ -73,10 +73,17 @@ li {
   cursor: pointer;
 }
 
+.listName{
+  margin-left: 50px;
+  padding: 10px;
+}
+
 .productList{
   display: flex;
   flex-direction: row;
   justify-content: left;
+  padding-left: 150px;
+  padding-right: 150px;
 }
 
 .item{

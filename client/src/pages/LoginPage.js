@@ -10,7 +10,7 @@ const Login = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const [cookies, setCookies, removeCookies] = useCookies(['login']);
+    const [cookies, setCookies, removeCookies] = useCookies(['login', 'id', 'password']);
 
     const navigate = useNavigate();
 
@@ -30,7 +30,11 @@ const Login = (props) => {
             if (res.data.loginSuccess) {
                 // 로그인에 성공한 경우 id를 출력
                 console.log(res.data.userId);
-                alert(res.data);
+
+                // 로그인에 성공한 경우 Information을 update한다.
+                setCookies('id', email);
+                setCookies('password', password);
+
                 // set cookie true, if login successed
                 setCookies('login', true);
                 navigate('/', { replace: true });
