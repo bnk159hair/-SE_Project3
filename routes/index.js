@@ -51,16 +51,13 @@ router.get('/api', (req, res, next) => {
 
       //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
       connection.release();
-
       return res.status(200).json({
-
         sucess: true,
         rows: rows
       }); 
-    })
-    
-  })
-})
+    });
+  });
+});
 
 router.post('/api/users/search', function (req, res, next) {
   //찾을 키워드: req.body.searchwd
@@ -192,16 +189,25 @@ router.get('/api/users/logout', auth, function (req, res) {
       return res.status(200).send({
         success: true
       });
-
     });
   });
 });
 
-router.post('api/users/comment', auth, function (req, res) {
-  pool.getConnection(function (err, connection) {
-
-  }
-  )
+router.post('/api/users/comment', function(req, res){
+  var sender_email = req.body.sender_email;
+  var comment = req.body.comment_content;
+  var product = req.body.comment_product_id;
+  pool.getConnection(function(err, connection){
+    var data = [sender_email, comment, product];
+    var sqlForInsertMember = "INSERT INTO comments(comment_sender_email, comment_content, comment_product_id) values(?, ?, ?)";
+    connection.query(sqlForInsertMember, data, function(err,rows){
+      if(err) console.error("err: "+err);
+      connection.release();
+      return res.status(200).send({
+        Insertion_success: true
+      });
+    });
+  });
 });
 
 //////////////////////////////////////////////////////////////////// 하영 코드 /////////////////////////////////////////////////////////////////////////
