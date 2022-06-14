@@ -195,12 +195,13 @@ router.post('api/users/comment', auth, function(req, res){
   )
 });
 
-/////////////////////////// 하영 코드 /////////////////////////////
+//////////////////////////////////////////////////////////////////// 하영 코드 /////////////////////////////////////////////////////////////////////////
 router.get('/member_selling', auth, function(req, res){ // 개인판매상품 목록 - 테스트 완료
   try {
+      var member_email = req.row.product_saler;
       pool.getConnection(function(err, connection){
           var sqlForSelectList = "SELECT * FROM products WHERE product_saler = ? ;";
-          connection.query(sqlForSelectList, req.params.product_saler, function(err, rows){
+          connection.query(sqlForSelectList, member_email, function(err, rows){
               if(err) console.error("err : "+err);
               console.log("rows : "+JSON.stringify(rows[0]));
 
@@ -215,16 +216,14 @@ router.get('/member_selling', auth, function(req, res){ // 개인판매상품 �
 });
 
 router.get('/info/:product_id', /*auth,*/ function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
-  // var product_id = req.params.product_id; //승건 참고
-  // var member_id = req.row.member_id;
-  // var member_email = req.row.member_email;
-  var product_id = req.body.product_id; //승건 참고
-  var member_id = req.body.member_id;
-  var member_email = req.body.member_email;
+  var product_id = req.params.product_id; //승건 참고
+  var member_id = req.row.member_id;
+  //var product_id = req.body.product_id; //승건 참고
+  //var member_id = req.body.member_id;
   try {
       pool.getConnection(function(err, connection){
           var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ;" // 상품 정보 가져오기
-          connection.query(sqlForSelectList, req.params.product_id, function(err, rows){ // rows에 상품 정보 담김
+          connection.query(sqlForSelectList, product_id, function(err, rows){ // rows에 상품 정보 담김
               if(err) console.error("err : "+err);
               console.log("rows : "+JSON.stringify(rows));
               var product_saler = rows[0].product_saler;
@@ -248,16 +247,20 @@ router.get('/info/:product_id', /*auth,*/ function(req, res){ // 특정 판매�
 });
 
 router.post('/info/:product_id', /*auth,*/ function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
-  var product_id = req.body.product_id; //승건 참고
+  var product_id = req.params.product_id; //승건 참고
   var member_id = req.row.member_id;
-  var zzim_num = req.body.zzim_num; //찜개수 승건이가 넘겨줘야함
+  //var product_id = req.body.product_id; //승건 참고
+  //var member_id = req.body.member_id;
+  
 
   pool.getConnection(function(err, connection){
-      datas = [member_id, product_id];
-      var checkzzim = "SELECT interest_id FROM interest_products WHERE member_id = ? AND product_id = ?;" // 해당 상품을 고객이 찜했는지
+      datas = [member_id, product_id, product_id];
+      var checkzzim = "SELECT interest_id FROM interest_products WHERE member_id = ? AND product_id = ?; SELECT product_interest FROM products WHERE product_id = ?;" // 해당 상품을 고객이 찜했는지
       connection.query(checkzzim, datas, function(err, zzim_res){
           if(err) console.error("err : "+err);
-          if(zzim_res.length == 0){ //찜을 안한상태일때
+          var zzim_num = zzim_res[1][0].product_interest;
+          console.log(zzim_res[0]);
+          if(zzim_res[0].length == 0){ //찜을 안한상태일때
               zzim_num = parseInt(zzim_num)+1;
               var updatezzim =
               "UPDATE products SET product_interest = ? WHERE product_id = ? ; INSERT INTO interest_products(product_id, member_id) VALUES (?, ?); SELECT product_interest FROM products WHERE product_id = ?" // 해당 상품을 고객이 찜했는지
