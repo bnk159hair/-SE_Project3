@@ -211,7 +211,7 @@ router.post('/api/users/comment', function(req, res){
 });
 
 //////////////////////////////////////////////////////////////////// 하영 코드 /////////////////////////////////////////////////////////////////////////
-router.get('/member_selling', auth, function (req, res) { // 개인판매상품 목록 - 테스트 완료
+router.get('/api/member_selling', auth, function (req, res) { // 개인판매상품 목록 - 테스트 완료
   try {
     var member_email = req.row.product_saler;
     pool.getConnection(function (err, connection) {
@@ -230,7 +230,7 @@ router.get('/member_selling', auth, function (req, res) { // 개인판매상품 
   }
 });
 
-router.get('/info/:product_id', auth, function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
+router.get('/api/info/:product_id', auth, function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
   var product_id = req.params.product_id; //승건 참고
   var member_id = req.row.member_id;
   //var product_id = req.body.product_id; //승건 참고
@@ -261,7 +261,7 @@ router.get('/info/:product_id', auth, function(req, res){ // 특정 판매상품
   }
 });
 
-router.post('/info/:product_id', auth, function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
+router.post('/api/info/:product_id', auth, function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
   var product_id = req.params.product_id; //승건 참고
   var member_id = req.row.member_id;
 
@@ -305,7 +305,7 @@ router.post('/info/:product_id', auth, function(req, res){ // 찜버튼 눌렀�
   });
 });
 
-router.get('/zzim', auth, function (req, res) { // 찜기능 테스트 완료
+router.get('/api/zzim', auth, function (req, res) { // 찜기능 테스트 완료
   console.log(req.row.member_id);
   try {
     pool.getConnection(function (err, connection) {
@@ -325,15 +325,15 @@ router.get('/zzim', auth, function (req, res) { // 찜기능 테스트 완료
 })
 
 
-router.get('/sellwrite', auth, function (req, res, next) { //물건 판매하기 사이트 불러오기
+router.get('/api/sellwrite', auth, function (req, res, next) { //물건 판매하기 사이트 불러오기
   var member_id = req.params.member_id;
 
   res.send();
 });
 
-router.post('/sellwrite', upload.array('img'), function(req,res){ // 게시글 업로드
+router.post('/api/sellwrite', auth, upload.array('img'), function(req,res){ // 게시글 업로드
   var product_title = req.body.product_title;
-  var product_saler = req.body.product_saler;
+  var product_saler = req.row.member_email;
   var product_price = req.body.product_price;
   var product_interest = 0;
   var product_state = 0; //판매중: 0
@@ -366,7 +366,7 @@ router.post('/sellwrite', upload.array('img'), function(req,res){ // 게시글 �
   });
 });
 
-router.get('/sellupdate', auth, function(req, res){ //물건 판매하기 사이트 불러오기
+router.get('/api/sellupdate', auth, function(req, res){ //물건 판매하기 사이트 불러오기
     var product_id = req.query.idx;
 
     pool.getConnection(function(err, connection){
@@ -382,7 +382,7 @@ router.get('/sellupdate', auth, function(req, res){ //물건 판매하기 사이
     });
 });
 
-router.post('/sellupdate', upload.array('img'), function(req,res){ //데이터 업로드
+router.post('/api/sellupdate', upload.array('img'), function(req,res){ //데이터 업로드
     var product_title = req.body.product_title;
     var product_saler = req.body.product_saler;
     var product_price = req.body.product_price;
@@ -417,7 +417,7 @@ router.post('/sellupdate', upload.array('img'), function(req,res){ //데이터 �
     });
 });
 
-router.get('/QnA_list', auth, function(req, res){
+router.get('/api/QnA_list', auth, function(req, res){
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT qna_title, qna_content FROM qna ;";
     connection.query(sqlForSelectList, function (err, rows) {
@@ -430,7 +430,7 @@ router.get('/QnA_list', auth, function(req, res){
   });
 });
 
-router.post('/QnA_write', auth, function(req, res){ // 미완성
+router.post('/api/QnA_write', auth, function(req, res){ // 미완성
   // pool.getConnection(function (err, connection) {
   //   var sqlForSelectList = "SELECT qna_title, qna_content FROM qna ;";
   //   connection.query(sqlForSelectList, function (err, rows) {
@@ -443,7 +443,7 @@ router.post('/QnA_write', auth, function(req, res){ // 미완성
   // });
 });
 
-router.get('/notice_list', auth, function(req, res){
+router.get('/api/notice_list', auth, function(req, res){
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT notice_title FROM notices ;";
     connection.query(sqlForSelectList, function (err, rows) {
@@ -456,8 +456,8 @@ router.get('/notice_list', auth, function(req, res){
   });
 });
 
-router.get('/notice_list_write', auth, function(req, res){
-  var member_email = req.rows.member_email;
+router.get('/api/notice_list_write', auth, function(req, res){
+  var member_email = req.row.member_email;
   //var member_email = req.body.member_email;
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT admin_id FROM admins WHERE admin_email = ?;";
@@ -473,8 +473,8 @@ router.get('/notice_list_write', auth, function(req, res){
   });
 });
 
-router.post('/notice_list_write', auth, function(req, res){
-  var member_email = req.rows.member_email;
+router.post('/api/notice_list_write', auth, function(req, res){
+  var member_email = req.row.member_email;
   var notice_title = req.body.notice_title;
   var notice_content = req.body.notice_content;
   //var member_email = req.body.member_email;
