@@ -12,6 +12,7 @@ import axios from 'axios';
 const SellPage = (props) => {
   //사진등록 추가해야함
   const [ProductTitle, SetProductTitle] = useState('');
+  const [ProductSaler, SetProductSaler] = useState('');
   const [ProductPrice, SetProductPrice] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
   const [ProductSellType, setProductSellType] = useState('');
@@ -23,8 +24,9 @@ const SellPage = (props) => {
     alert("상품이 등록되었습니다!")
     //console.log(ProdId);
     navigate('/', { replace: true });
-    axios.post('/api/prod/sell', {
+    axios.post('/sellwrite', {
       product_title: ProductTitle,
+      product_saler: ProductSaler,
       product_price: ProductPrice,
       product_content: ProductContent,
       product_sell_type: ProductSellType
