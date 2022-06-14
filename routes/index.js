@@ -119,6 +119,7 @@ router.post('/api/users/login', function(req, res){
           message: "제공된 이메일에 해당하는 유저가 없습니다."
         })
       }
+      
       console.log(rows[0].member_password)
       //있다면
       //요청된 이메일이 데이터베이스에 있다면 비밀번호가 맞는 비밀번호인지 확인
