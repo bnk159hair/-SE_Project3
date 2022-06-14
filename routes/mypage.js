@@ -38,7 +38,7 @@ router.get('/member_selling', auth, function(req, res){ // 개인판매상품 �
                 if(err) console.error("err : "+err);
                 console.log("rows : "+JSON.stringify(rows[0]));
 
-                res.render('승건이 사이트', {title: '판매목록', rows:rows});
+                res.send(rows);
                 connection.release();
             });
         });
@@ -48,7 +48,7 @@ router.get('/member_selling', auth, function(req, res){ // 개인판매상품 �
     }
 });
 
-router.get('/info/:idx', /*auth,*/ function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
+router.get('/info/:product_id', /*auth,*/ function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
     var product_id = req.body.product_id; //승건 참고
     var member_id = req.body.member_id;
     try {
@@ -65,7 +65,7 @@ router.get('/info/:idx', /*auth,*/ function(req, res){ // 특정 판매상품 �
                     if(zzim_res.length == 0){
                         console.log("Noop");
                     }
-                    res.render('승건이 사이트', {title: '판매목록', rows:rows, zzim:zzim_res}); // 두개 반환
+                    res.send(rows, zzim_res); // 두개 반환
                     connection.release();
                 });
             });
@@ -76,7 +76,7 @@ router.get('/info/:idx', /*auth,*/ function(req, res){ // 특정 판매상품 �
     }
 });
 
-router.post('/info/:idx', /*auth,*/ function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
+router.post('/info/:product_id', /*auth,*/ function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
     var product_id = req.body.product_id; //승건 참고
     var member_id = req.body.member_id;
     var zzim_num = req.body.zzim_num; //찜개수 승건이가 넘겨줘야함
@@ -94,7 +94,7 @@ router.post('/info/:idx', /*auth,*/ function(req, res){ // 찜버튼 눌렀을�
                 connection.query(updatezzim, add_zzim, function(err, zzim_res){
                     if(err) console.error("err : "+err);
                     console.log("rows : "+JSON.stringify(zzim_res[2]));
-                    res.render('승건이 사이트', {title: '판매목록', zzim:zzim_res}); // 두개 반환
+                    res.send(zzim_res); // 두개 반환
                     
                 });
             }else{
@@ -106,7 +106,7 @@ router.post('/info/:idx', /*auth,*/ function(req, res){ // 찜버튼 눌렀을�
                 connection.query(updatezzim, add_zzim, function(err, zzim_res){
                     if(err) console.error("err : "+err);
                     console.log("rows : "+JSON.stringify(zzim_res[2]));
-                    res.render('승건이 사이트', {title: '판매목록', zzim:zzim_res}); // 두개 반환
+                    res.send(zzim_res);
                 });
             };
             connection.release();
@@ -124,7 +124,7 @@ router.get('/zzim', auth, function(req, res){ // 찜기능 테스트 완료
                 if(err) console.error("err : "+err);
                 console.log("rows : "+JSON.stringify(rows));
 
-                res.render('승건이 사이트', {title: '찜목록', rows:rows});
+                res.send(rows);
                 connection.release();
             });
         });
@@ -138,7 +138,7 @@ router.get('/zzim', auth, function(req, res){ // 찜기능 테스트 완료
 router.get('/sellwrite', auth, function(req, res, next){ //물건 판매하기 사이트 불러오기
     var member_id = req.body.member_id;
 
-    res.render('selwrite', {title: "물건 판매글 등록"});
+    res.send();
 });
 
 router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 업로드
@@ -169,12 +169,53 @@ router.post('/sellwrite', upload.array('img'), function(req,res){ //데이터 �
                 if(err) console.error("err : "+err);
                 console.log("insert ID : "+JSON.stringify(result.insertId));
                 
-                res.render('sellwrite', {title: "물건 판매글 등록"});
+                res.send('Success');
                 connection.release();
             });
         });
     });
 });
+
+// router.get('/sellupdate', auth, function(req, res, next){ //물건 판매하기 사이트 불러오기
+//     var idx = req.query.idx;
+
+//     res.render('selwrite', {title: "물건 판매글 등록"});
+// });
+
+// router.post('/sellupdate', upload.array('img'), function(req,res){ //데이터 업로드
+//     var product_title = req.body.product_title;
+//     var product_saler = req.body.product_saler;
+//     var product_price = req.body.product_price;
+//     var product_interest = 0;
+//     var product_state = 0; //판매중: 0
+//     var product_content = req.body.product_content;
+//     var product_image = new Array();
+//     //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
+    
+//     pool.getConnection(function(err, connection){
+//         var sqlForSelectList = "INSERT INTO products(product_title, product_saler, product_price, product_interest, product_state, product_content) VALUES (?, ?, ?, ?, ?, ?);"
+//         datas = [product_title, product_saler, product_price, product_interest, product_state, product_content];
+//         connection.query(sqlForSelectList, datas, function(err, result){
+//             if(err) console.error("err : "+err);
+//             console.log("insert ID : "+JSON.stringify(result.insertId));
+//             insertID = result.insertId;
+//             for(let i =0; i<req.files.length; i++){
+//                  product_image.push([insertID, req.files[i].filename]);
+//             };
+//             // for(let i =0; i<filename.length; i++){
+//             //     product_image.push([insertID, filename[i]]);
+//             // }
+//             var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
+//             connection.query(sqlForPhoto, [product_image], function(err, result){
+//                 if(err) console.error("err : "+err);
+//                 console.log("insert ID : "+JSON.stringify(result.insertId));
+                
+//                 res.render('sellwrite', {title: "물건 판매글 등록"});
+//                 connection.release();
+//             });
+//         });
+//     });
+// });
 
 
 module.exports = router;
