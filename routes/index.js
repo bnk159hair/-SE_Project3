@@ -52,7 +52,7 @@ router.post('/api/users/search',function(req, res, next){
       if (err) console.error("error : "+err);
       console.log("rows : " + JSON.stringify(rows));
 
-      //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
+      //res.render('*render할 페이지*/', /*{넘겨야하는 변수}*/);
       connection.release();
       return res.status(200).json({
         success: true,
