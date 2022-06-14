@@ -34,11 +34,9 @@ const upload = multer({
   }),
 });
 
-router.get('/api', (req, res) => {
-  res.send({ test: "hi" });
-});
 
-router.get('/', (req, res, next) => {
+router.get('/api', (req, res, next) => {
+  console.log("hello");
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
     UNION ALL\
@@ -46,17 +44,21 @@ router.get('/', (req, res, next) => {
     UNION ALL\
     SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
     connection.query(sqlForSelectList, function (err, rows) {
+      console.log("hello");
+
       if (err) console.error("error : " + err);
       console.log("rows : " + JSON.stringify(rows));
 
       //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
       connection.release();
-    })
-    return res.status(200).json({
 
-      sucess: true,
-      rows: rows
-    }); 
+      return res.status(200).json({
+
+        sucess: true,
+        rows: rows
+      }); 
+    })
+    
   })
 })
 

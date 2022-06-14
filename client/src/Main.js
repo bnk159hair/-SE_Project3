@@ -13,9 +13,11 @@ const Main = () => {
     const [list, setList] = useState([]);
 
     useEffect(() => {
-        axios.get('/')
+        alert('hello')
+        axios.get('/api')
         .then(function(res){
-            console.log(res.data.rows[0]);
+            console.log(res.data.rows);
+            alert('hello');
         });
     }, []);
 
