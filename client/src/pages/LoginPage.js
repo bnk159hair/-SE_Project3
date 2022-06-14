@@ -16,8 +16,7 @@ const Login = (props) => {
         axios.post('/api/users/login', {
             member_email: email,
             member_password: password
-        }
-        )
+        })
             .then(function (res) {
                 console.log(res.data.loginSuccess);
                 if (res.data.loginSuccess) {
