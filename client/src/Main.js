@@ -4,7 +4,7 @@ import {useCookies} from 'react-cookie';
 import './App.css';
 
 import ProductInfo from './components/ProductInfo';
-import NavBar from './components/NavBar';
+import NavBar, {getOnSearch, returnList} from './components/NavBar';
 import MainImage from './components/MainImage';
 import Info from './components/Info';
 import axios from 'axios';
@@ -12,7 +12,7 @@ import {setInfo, getInfo} from './pages/List';
 
 const Main = () => {
     const [isUpdate, setIsUpdate] = useState(false);
-
+    const [isMain, setIsMain] = useState(true);
     //var information = Array(15);
 
     useEffect(() => {
@@ -30,6 +30,8 @@ const Main = () => {
             console.log(getInfo(2));
             console.log("is update?", isUpdate);
         });
+        // 검색어 있는 경우 false로 바꿔준다. 없는 경우 true로 바꿔준다.
+        setIsMain(!getOnSearch());
     }, []);
 
     return (
@@ -38,6 +40,10 @@ const Main = () => {
                 <NavBar imageLink="./images/glass.png"/>
                 <MainImage imageSrc="./images/background1.png" />
 
+                {
+                    isMain ? 
+                    "hello" : returnList()
+                }
                 <h2 className="listName">- BEST</h2>
                 <div className="productList">
                     <ProductInfo id={ isUpdate ? getInfo(0).product_id : 0 }imageLink="./images/logo192.png" productId="1" productName={isUpdate ? getInfo(0).product_title : "default"} name={isUpdate ? getInfo(0).product_saler : ""} productInterest={isUpdate ? getInfo(0).product_interest : 0} price={isUpdate ? getInfo(0).product_price : 0}/>

@@ -7,10 +7,29 @@ import { Link } from 'react-router-dom';
 
 const cookies = new Cookies();
 
+const onSearch = false;
+// 최대 100개의 검색 결과를 저장한다.
+const searchList = [];
+var length = 0;
+
+const getOnSearch = () =>{
+    return onSearch;
+}
+
+const returnList = () => {
+    console.log(searchList);
+    return (
+        <>
+        <div>
+            {searchList}
+        </div>
+        </>
+    )
+}
+
 const NavBar = () => {
     // 검색어 저장
     const [search, setSearch] = useState('');
-
     const [loginCookie, setLoginCookie] = useState(cookies.get('login'));
 
     const onSearch = (e) => {
@@ -30,9 +49,20 @@ const NavBar = () => {
                 // 상품 정보 가져오는 부분 아직 미구현
                 console.log(res.data.rows[0]);
                 alert(res.data.rows[0].product_title);
+                length = res.data.rows.length;
+
+                for (var step = 0; step < length; step++){
+                    console.log(res.data.rows[step]);
+                    
+                    searchList.push(
+                        <ol key={res.data.rows[step].product_id}>
+                            {res.data.rows[step].product_title}
+                        </ol>
+                    );
+                }
             });
 
-            
+            onSearch = true;
         }
     }
 
@@ -101,3 +131,4 @@ const NavBar = () => {
 }
 
 export default NavBar;
+export {getOnSearch, returnList};
