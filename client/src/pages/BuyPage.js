@@ -65,7 +65,7 @@ const BuyPage = (props) => {
   const onClickInterest = () => {
     console.log("Interest button clicked!");
     axios.post('/info/' + ProdId).then((res) => {
-      console.log("response" + res)
+      console.log("response" + JSON.stringify(res))
     })
     //navigate('/', { replace: true });
   }
