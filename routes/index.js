@@ -37,11 +37,9 @@ const upload = multer({
   }),
 });
 
-router.get('/api', (req, res) => {
-  res.send({ test: "hi" });
-});
 
-router.get('/', (req, res, next) => {
+router.get('/api', (req, res, next) => {
+  console.log("hello");
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
     UNION ALL\
@@ -49,19 +47,21 @@ router.get('/', (req, res, next) => {
     UNION ALL\
     SELECT  product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
     connection.query(sqlForSelectList, function (err, rows) {
+      console.log("hello");
+
       if (err) console.error("error : " + err);
       console.log("rows : " + JSON.stringify(rows));
 
       //res.render('/*render할 페이지*/', /*{넘겨야하는 변수}*/);
       connection.release();
-    })
-    return res.status(200).json({
 
-      sucess: true,
-      rows: rows
+      return res.status(200).json({
+        sucess: true,
+        rows: rows
+      });
     });
-  })
-})
+  });
+});
 
 router.post('/api/users/search', function (req, res, next) {
   //찾을 키워드: req.body.searchwd
@@ -143,6 +143,7 @@ router.post('/api/users/login', function (req, res) {
           message: "제공된 이메일에 해당하는 유저가 없습니다."
         })
       }
+
       console.log(rows[0].member_password)
       //있다면
       //요청된 이메일이 데이터베이스에 있다면 비밀번호가 맞는 비밀번호인지 확인
@@ -192,16 +193,25 @@ router.get('/api/users/logout', auth, function (req, res) {
       return res.status(200).send({
         success: true
       });
-
     });
   });
 });
 
-router.post('api/users/comment', auth, function (req, res) {
+router.post('/api/users/comment', function (req, res) {
+  var sender_email = req.body.sender_email;
+  var comment = req.body.comment_content;
+  var product = req.body.comment_product_id;
   pool.getConnection(function (err, connection) {
-
-  }
-  )
+    var data = [sender_email, comment, product];
+    var sqlForInsertMember = "INSERT INTO comments(comment_sender_email, comment_content, comment_product_id) values(?, ?, ?)";
+    connection.query(sqlForInsertMember, data, function (err, rows) {
+      if (err) console.error("err: " + err);
+      connection.release();
+      return res.status(200).send({
+        Insertion_success: true
+      });
+    });
+  });
 });
 
 //////////////////////////////////////////////////////////////////// 하영 코드 /////////////////////////////////////////////////////////////////////////
@@ -255,7 +265,9 @@ router.get('/info/:product_id', auth, function (req, res) { // 특정 판매상�
   }
 });
 
+
 router.post('/info/:product_id', auth, function (req, res) { // 찜버튼 눌렀을때 동적으로 반응
+
   var product_id = req.params.product_id; //승건 참고
   var member_id = req.row.member_id;
   console.log("sss" + member_id)
@@ -325,17 +337,7 @@ router.get('/sellwrite', auth, function (req, res, next) { //물건 판매하기
   res.send();
 });
 
-router.post('/api/upload', upload.array('img'), (req, res) => {
-
-  console.log("!!!@!@!@" + req);
-  for (let i = 0; i < req.files.length; i++) {
-    console.log(req.files[i].filename);
-  };
-  res.send('Success');
-})
-
-
-router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { // 게시글 업로드
+router.post('/sellwrite', upload.array('img'), function (req, res) { // 게시글 업로드
   var product_title = req.body.product_title;
   var product_saler = req.row.member_email;
   var product_price = req.body.product_price;
@@ -371,46 +373,56 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
   });
 });
 
-// router.get('/sellupdate', auth, function(req, res, next){ //물건 판매하기 사이트 불러오기
-//     var idx = req.query.idx;
+router.get('/sellupdate', auth, function (req, res) { //물건 판매하기 사이트 불러오기
+  var product_id = req.query.idx;
 
-//     res.render('selwrite', {title: "물건 판매글 등록"});
-// });
+  pool.getConnection(function (err, connection) {
+    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
 
-// router.post('/sellupdate', upload.array('img'), function(req,res){ //데이터 업로드
-//     var product_title = req.body.product_title;
-//     var product_saler = req.body.product_saler;
-//     var product_price = req.body.product_price;
-//     var product_interest = 0;
-//     var product_state = 0; //판매중: 0
-//     var product_content = req.body.product_content;
-//     var product_image = new Array();
-//     //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
+    var sql = "SELECT * FROM products WHERE product_id = ?";
+    connection.query(sql, product_id, function (err, rows) {
+      if (err) console.error(err);
+      console.log("update에서 1개 글 조회 결과 확인 : ", rows);
+      res.send(rows);
+      connection.release();
+    });
+  });
+});
 
-//     pool.getConnection(function(err, connection){
-//         var sqlForSelectList = "INSERT INTO products(product_title, product_saler, product_price, product_interest, product_state, product_content) VALUES (?, ?, ?, ?, ?, ?);"
-//         datas = [product_title, product_saler, product_price, product_interest, product_state, product_content];
-//         connection.query(sqlForSelectList, datas, function(err, result){
-//             if(err) console.error("err : "+err);
-//             console.log("insert ID : "+JSON.stringify(result.insertId));
-//             insertID = result.insertId;
-//             for(let i =0; i<req.files.length; i++){
-//                  product_image.push([insertID, req.files[i].filename]);
-//             };
-//             // for(let i =0; i<filename.length; i++){
-//             //     product_image.push([insertID, filename[i]]);
-//             // }
-//             var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
-//             connection.query(sqlForPhoto, [product_image], function(err, result){
-//                 if(err) console.error("err : "+err);
-//                 console.log("insert ID : "+JSON.stringify(result.insertId));
+router.post('/sellupdate', upload.array('img'), function (req, res) { //데이터 업로드
+  var product_title = req.body.product_title;
+  var product_saler = req.body.product_saler;
+  var product_price = req.body.product_price;
+  var product_interest = 0;
+  var product_state = 0; //판매중: 0
+  var product_content = req.body.product_content;
+  var product_image = new Array();
+  //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
 
-//                 res.render('sellwrite', {title: "물건 판매글 등록"});
-//                 connection.release();
-//             });
-//         });
-//     });
-// });
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "UPDATE products SET product_title = ?, product_saler = ?, product_price = ?, product_interest = ?, product_state = ?, product_content = ? WHERE product_id = ?;"
+    datas = [product_title, product_saler, product_price, product_interest, product_state, product_content, product_id];
+    connection.query(sqlForSelectList, datas, function (err, result) {
+      if (err) console.error("err : " + err);
+      console.log("insert ID : " + JSON.stringify(result.insertId));
+      insertID = result.insertId;
+      for (let i = 0; i < req.files.length; i++) {
+        product_image.push([insertID, req.files[i].filename]);
+      };
+      // for(let i =0; i<filename.length; i++){
+      //     product_image.push([insertID, filename[i]]);
+      // }
+      var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
+      connection.query(sqlForPhoto, [product_image], function (err, result) {
+        if (err) console.error("err : " + err);
+        console.log("insert ID : " + JSON.stringify(result.insertId));
+
+        res.render('sellwrite', { title: "물건 판매글 등록" });
+        connection.release();
+      });
+    });
+  });
+});
 
 /////
 
