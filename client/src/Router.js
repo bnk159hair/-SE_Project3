@@ -8,6 +8,7 @@ import BuyPage from './pages/BuyPage';
 import SellPage from './pages/SellPage';
 import ContactPage from './pages/ContactPage';
 import MyPage from './pages/MyPage';
+import Search from './pages/Search';
 
 const Router = () => {
     return (
@@ -23,6 +24,7 @@ const Router = () => {
             <Route path="/sellpage" element={<SellPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/mypage" element={<MyPage />} />
+            <Route path="/search" element={<Search />} />
 
             <Route path="/redirect" element={<Navigate to='/' />} />
             {/*Not found */}

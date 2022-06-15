@@ -1,26 +1,27 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
+import { useNavigate } from 'react-router';
 
 import {Cookies} from 'react-cookie';
 
 import { Link } from 'react-router-dom';
+import { setIsMain, getIsMain } from '../pages/List';
+import ProductInfo from './ProductInfo';
 
 const cookies = new Cookies();
 
-const onSearch = false;
+
 // 최대 100개의 검색 결과를 저장한다.
 const searchList = [];
 var length = 0;
 
-const getOnSearch = () =>{
-    return onSearch;
-}
+
 
 const returnList = () => {
     console.log(searchList);
     return (
         <>
-        <div>
+        <div className="productList">
             {searchList}
         </div>
         </>
@@ -31,6 +32,8 @@ const NavBar = () => {
     // 검색어 저장
     const [search, setSearch] = useState('');
     const [loginCookie, setLoginCookie] = useState(cookies.get('login'));
+    
+    const navigate = useNavigate();
 
     const onSearch = (e) => {
         // button 클릭후 페이지 초기화면으로의 이동을 막아줍니다.
@@ -40,6 +43,7 @@ const NavBar = () => {
         if(search === null || search === ''){
             alert('검색어를 입력하세요.');
             alert(loginCookie);
+            setIsMain(true);
         }
         else {
             // params 이용해서 search word를 넘겨준다.
@@ -50,19 +54,21 @@ const NavBar = () => {
                 console.log(res.data.rows[0]);
                 alert(res.data.rows[0].product_title);
                 length = res.data.rows.length;
-
+                // 이전의 검색 목록을 비워준다.
+                for (var step = 0; step < searchList.length; step++){
+                    searchList.pop();
+                }
+                // 새로운 검색 내용을 채워준다.
                 for (var step = 0; step < length; step++){
                     console.log(res.data.rows[step]);
                     
                     searchList.push(
-                        <ol key={res.data.rows[step].product_id}>
-                            {res.data.rows[step].product_title}
-                        </ol>
+                        <ProductInfo id={res.data.rows[step].produt_id} imageLink="./images/logo192.png" productName={res.data.rows[step].product_title} name={res.data.rows[step].product_saler} productInterest={res.data.rows[step].product_interest} price={res.data.rows[step].product_price}/>
                     );
                 }
+                console.log('move to search tap');
+                navigate('/search', { replace: true });
             });
-
-            onSearch = true;
         }
     }
 
@@ -131,4 +137,4 @@ const NavBar = () => {
 }
 
 export default NavBar;
-export {getOnSearch, returnList};
+export {returnList};
