@@ -7,8 +7,21 @@ import BP_ProdImage from '../components/BP_ProdImage';
 import BP_Prod from '../components/BP_Prod';
 import BP_SellerInfo from '../components/BP_SellerInfo';
 import axios from 'axios';
+import ProductInfo from '../components/ProductInfo';
 
-const List = [];
+const itemList = [];
+
+const returnList = () => {
+  console.log("item" + itemList);
+  return (
+    <>
+    <div className="productList">
+      {itemList}
+    </div>
+    </>
+  )
+}
+
 //props : 
 const sellList = (props) => {
   return (
@@ -25,7 +38,7 @@ const sellList = (props) => {
 }
 
 const MyPage = (props) => {
-
+  
   useEffect(() => {
     console.log('11233')
     axios.get('/api/member_selling')
@@ -37,20 +50,26 @@ const MyPage = (props) => {
         console.log(length);
         console.log(res.data[0].product_title)
         for (var i = 0; i < length; i++) {
-          List.push(
-            <sellList title={res.data[i].product_title} price={res.data[i].product_price} />
+          console.log("hoh")
+          itemList.push(
+            <sellList title={res.data[i].product_title} prict={res.data[i].product_price} />
           );
           console.log(res.data[i].product_title + ' ' + res.data[i].product_price);
         }
       })
   })
-
+  
   return (
     <>
     
       
       <Container>
-        <Link to='/logout'>로그아웃</Link>
+        <Link to='/logout'
+        style={{
+          "color": "black",
+          "text-decoration": "none"
+        }}
+        >로그아웃</Link>
         <Title>
           판매목록/배송조회
           <CurrentPage>
@@ -70,7 +89,76 @@ const MyPage = (props) => {
             </tr>
           </Thead>
           <Tbody>
-            {List}
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
+            <tr>
+              <td>몰라</td>
+              <td>10</td>
+              <td>100,000</td>
+              <td>3,000</td>
+              <td>배송 완료</td>
+            </tr>
           </Tbody>
         </CartContainer>
       </Container>
