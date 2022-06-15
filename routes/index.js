@@ -377,15 +377,10 @@ router.get('/api/cor/:product_id', auth, function (req, res) { // 수정을 요�
 
   console.log("member_email : ", member_email.length)
   var product_id = req.params.product_id;
-<<<<<<< HEAD
   //var member_email = req.body.member_email;
   //var product_id = req.body.product_id;
   pool.getConnection(function (err, connection) {
     if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
-=======
-  pool.getConnection(function(err, connection){
-    if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
->>>>>>> 561b69e52a91f855d9396bf1621fdccf1297946a
 
     var sql = "SELECT product_saler FROM products WHERE product_id = ?";
     connection.query(sql, product_id, function (err, result) {
@@ -433,19 +428,12 @@ router.post('/api/sellupdate', auth, upload.array('img'), function (req, res) { 
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "UPDATE products SET product_title = ?, product_price = ?, product_state = ?, product_content = ? WHERE product_id = ?; DELETE FROM photos WHERE product_id = ? ;"
     datas = [product_title, product_price, product_state, product_content, product_id, product_id];
-<<<<<<< HEAD
     connection.query(sqlForSelectList, datas, function (err, result) {
       if (err) console.error("err : " + err);
       //console.log("insert ID : "+JSON.stringify(result.insertId));
       //insertID = result.insertId;
       for (let i = 0; i < req.files.length; i++) {
         product_image.push([product_id, req.files[i].filename]);
-=======
-    connection.query(sqlForSelectList, datas, function(err, result){
-      if(err) console.error("err : "+err);
-      for(let i =0; i<req.files.length; i++){
-            product_image.push([product_id, req.files[i].filename]);
->>>>>>> 561b69e52a91f855d9396bf1621fdccf1297946a
       };
       var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
       connection.query(sqlForPhoto, [product_image], function (err, result) {
@@ -540,9 +528,6 @@ router.post('/api/notice_list_write', auth, function (req, res) {
   });
 });
 
-<<<<<<< HEAD
-router.get('/api/delete/:product_id', auth, function (req, res) {
-=======
 router.get('/api/notice/:notice_id', auth, function (req, res) {
   var notice_id = req.params.notice_id;
   pool.getConnection(function (err, connection) {
@@ -558,8 +543,7 @@ router.get('/api/notice/:notice_id', auth, function (req, res) {
 });
 
 
-router.get('/delete/:product_id', auth, function(req, res){
->>>>>>> 561b69e52a91f855d9396bf1621fdccf1297946a
+router.get('/delete/:product_id', auth, function (req, res) {
   var member_email = req.row.member_email;
   console.log("member_email" + member_email);
   var product_id = req.params.product_id;
