@@ -25,6 +25,7 @@ const BuyPage = (props) => {
   const [ProductLocation, SetProductLocation] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
   const [Z, SetZ] = useState('찜');
+  const [ProductImg, SetProductImg] = useState('');
   const [Phone, SetPhone] = useState('010-1234-1234')
 
   let Location = useLocation();
@@ -56,6 +57,7 @@ const BuyPage = (props) => {
       SetProductContent(res.data[0][0].product_content);
       SetSeller(res.data[1][0].member_email)
       SetScore(res.data[1][0].member_score)
+      SetProductImg(res.data[2][0].photo_data)
       //console.log("!!!!" + res.data[1][0].member_email)
     })
   }, [])
@@ -115,7 +117,7 @@ const BuyPage = (props) => {
         <Container>
           <ItemBox>
             <ImgBox>
-              <img src="./images/logo192.png" alt='상품이미지' />
+              <img src={SetProductImg} alt='상품이미지' />
             </ImgBox>
             <ItemInfoBox>
               <InfoBox>
