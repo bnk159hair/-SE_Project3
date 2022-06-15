@@ -37,7 +37,7 @@ const Main = () => {
                 <NavBar imageLink="./images/glass.png"/>
                 <MainImage imageSrc="./images/background1.png" />
 
-                <h2 className="listName">- BEST</h2>
+                <h2 className="listName">- BEST ITEMS</h2>
                 <div className="productList">
                     <ProductInfo id={ isUpdate ? getInfo(0).product_id : 0 }imageLink="./images/logo192.png" productName={isUpdate ? getInfo(0).product_title : "default"} name={isUpdate ? getInfo(0).product_saler : ""} productInterest={isUpdate ? getInfo(0).product_interest : 0} price={isUpdate ? getInfo(0).product_price : 0}/>
                     <ProductInfo id={ isUpdate ? getInfo(1).product_id : 0 }imageLink="./images/logo192.png" productName={isUpdate ? getInfo(1).product_title : "default"} name={isUpdate ? getInfo(1).product_saler : ""} productInterest={isUpdate ? getInfo(1).product_interest : 0} price={isUpdate ? getInfo(1).product_price : 0}/> 
@@ -45,7 +45,6 @@ const Main = () => {
                     <ProductInfo id={ isUpdate ? getInfo(3).product_id : 0 }imageLink="./images/logo192.png" productName={isUpdate ? getInfo(3).product_title : "default"} name={isUpdate ? getInfo(3).product_saler : ""} productInterest={isUpdate ? getInfo(3).product_interest : 0} price={isUpdate ? getInfo(3).product_price : 0}/> 
                     <ProductInfo id={ isUpdate ? getInfo(0).product_id : 0 }imageLink="./images/logo192.png" productName={isUpdate ? getInfo(2).product_title : "default"} name={isUpdate ? getInfo(2).product_saler : ""} productInterest={isUpdate ? getInfo(2).product_interest : 0} price={isUpdate ? getInfo(2).product_price : 0}/>        
                 </div>
-                <h2 className="listName">- CLOTHES</h2>
                 <div className="productList">
                     <ProductInfo imageLink="./images/logo192.png" productId="1" productName={isUpdate ? getInfo(0).product_title : "default"} name={isUpdate ? getInfo(0).product_saler : ""} productInterest={isUpdate ? getInfo(0).product_interest : 0} price={isUpdate ? getInfo(0).product_price : 0}/>
                     <ProductInfo imageLink="./images/logo192.png" productId="2" productName={isUpdate ? getInfo(1).product_title : "default"} name={isUpdate ? getInfo(1).product_saler : ""} productInterest={isUpdate ? getInfo(1).product_interest : 0} price={isUpdate ? getInfo(1).product_price : 0}/> 
@@ -53,7 +52,6 @@ const Main = () => {
                     <ProductInfo imageLink="./images/logo192.png" productId="4" productName={isUpdate ? getInfo(3).product_title : "default"} name={isUpdate ? getInfo(3).product_saler : ""} productInterest={isUpdate ? getInfo(3).product_interest : 0} price={isUpdate ? getInfo(3).product_price : 0}/> 
                     <ProductInfo imageLink="./images/logo192.png" productId="4" productName={isUpdate ? getInfo(2).product_title : "default"} name={isUpdate ? getInfo(2).product_saler : ""} productInterest={isUpdate ? getInfo(2).product_interest : 0} price={isUpdate ? getInfo(2).product_price : 0}/>  
                 </div>
-                <h2 className="listName">- ELECTRIC DEVICE</h2>
                 <div className="productList">
                     <ProductInfo imageLink="./images/logo192.png" productId="1" productName={isUpdate ? getInfo(0).product_title : "default"} name={isUpdate ? getInfo(0).product_saler : ""} productInterest={isUpdate ? getInfo(0).product_interest : 0} price={isUpdate ? getInfo(0).product_price : 0}/>
                     <ProductInfo imageLink="./images/logo192.png" productId="2" productName={isUpdate ? getInfo(1).product_title : "default"} name={isUpdate ? getInfo(1).product_saler : ""} productInterest={isUpdate ? getInfo(1).product_interest : 0} price={isUpdate ? getInfo(1).product_price : 0}/> 
