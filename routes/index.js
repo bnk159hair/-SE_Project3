@@ -256,8 +256,13 @@ router.get('/api/info/:product_id', auth, function (req, res) { // 특정 판매
           if (zzim_res[0].length == 0) {
             console.log("Noop");
           }
-          res.send([rows, zzim_res]); // 두개 반환
-          connection.release();
+          var photoSQL = "SELECT photo_data FROM photos WHERE product_id = ? ;" // 사진 데이터 반환
+          connection.query(photoSQL, product_id, function (err, photo_data) {
+            if (err) console.error("err : " + err);
+            //console.log("rows : " + JSON.stringify(zzim_res));
+            res.send([rows, zzim_res, photo_data]); // 두개 반환
+            connection.release();
+          });
         });
       });
     });
@@ -346,7 +351,6 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
   var product_state = 0; //판매중: 0
   var product_content = req.body.product_content;
   var product_image = new Array();
-  //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
 
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "INSERT INTO products(product_title, product_saler, product_price, product_interest, product_state, product_content) VALUES (?, ?, ?, ?, ?, ?);"
@@ -358,9 +362,6 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
       for (let i = 0; i < req.files.length; i++) {
         product_image.push([insertID, req.files[i].filename]);
       };
-      // for(let i =0; i<filename.length; i++){
-      //     product_image.push([insertID, filename[i]]);
-      // }
       var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
       connection.query(sqlForPhoto, [product_image], function (err, result) {
         if (err) console.error("err : " + err);
