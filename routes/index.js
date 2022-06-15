@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+
+
 //mysql 연결
 var mysql = require('mysql');
 const config = require('../config/key');
@@ -22,6 +24,7 @@ const app = require('../app');
 
 //사진 - 하영
 const multer = require('multer');
+const path = require('path');
 //const upload = multer({ dest: 'public/'});
 const upload = multer({
   storage: multer.diskStorage({
@@ -55,7 +58,7 @@ router.get('/api', (req, res, next) => {
       return res.status(200).json({
         sucess: true,
         rows: rows
-      }); 
+      });
     });
   });
 });
@@ -140,7 +143,7 @@ router.post('/api/users/login', function (req, res) {
           message: "제공된 이메일에 해당하는 유저가 없습니다."
         })
       }
-      
+
       console.log(rows[0].member_password)
       //있다면
       //요청된 이메일이 데이터베이스에 있다면 비밀번호가 맞는 비밀번호인지 확인
@@ -194,15 +197,15 @@ router.get('/api/users/logout', auth, function (req, res) {
   });
 });
 
-router.post('/api/users/comment', function(req, res){
+router.post('/api/users/comment', function (req, res) {
   var sender_email = req.body.sender_email;
   var comment = req.body.comment_content;
   var product = req.body.comment_product_id;
-  pool.getConnection(function(err, connection){
+  pool.getConnection(function (err, connection) {
     var data = [sender_email, comment, product];
     var sqlForInsertMember = "INSERT INTO comments(comment_sender_email, comment_content, comment_product_id) values(?, ?, ?)";
-    connection.query(sqlForInsertMember, data, function(err,rows){
-      if(err) console.error("err: "+err);
+    connection.query(sqlForInsertMember, data, function (err, rows) {
+      if (err) console.error("err: " + err);
       connection.release();
       return res.status(200).send({
         Insertion_success: true
@@ -215,7 +218,7 @@ router.post('/api/users/comment', function(req, res){
 router.get('/api/member_selling', auth, function (req, res) { // 개인판매상품 목록 - 테스트 완료
   try {
     var member_email = req.row.member_email;
-    console.log("#!@#!@#!@#!@#"+member_email);
+
     pool.getConnection(function (err, connection) {
       var sqlForSelectList = "SELECT * FROM products WHERE product_saler = ? ;";
       connection.query(sqlForSelectList, member_email, function (err, rows) {
@@ -232,15 +235,16 @@ router.get('/api/member_selling', auth, function (req, res) { // 개인판매상
   }
 });
 
-router.get('/api/info/:product_id', auth, function(req, res){ // 특정 판매상품 구매페이지 - 테스트 완료
+
+router.get('/api/info/:product_id', auth, function (req, res) { // 특정 판매상품 구매페이지 - 테스트 완료
   var product_id = req.params.product_id; //승건 참고
   var member_id = req.row.member_id;
   //var product_id = req.body.product_id; //승건 참고
   //var member_id = req.body.member_id;
   try {
     pool.getConnection(function (err, connection) {
-      var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ;" // 상품 정보 가져오기
-      connection.query(sqlForSelectList, product_id, function (err, rows) { // rows에 상품 정보 담김
+      var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ; SELECT * FROM comments WHERE comment_product_id = ? ;" // 상품 정보 가져오기
+      connection.query(sqlForSelectList, [product_id, product_id], function (err, rows) { // rows에 상품 정보 담김
         if (err) console.error("err : " + err);
         //console.log("rows : " + JSON.stringify(rows));
         var product_saler = rows[0].product_saler;
@@ -263,7 +267,8 @@ router.get('/api/info/:product_id', auth, function(req, res){ // 특정 판매�
   }
 });
 
-router.post('/api/info/:product_id', auth, function(req, res){ // 찜버튼 눌렀을때 동적으로 반응
+
+router.post('/api/info/:product_id', auth, function (req, res) { // 찜버튼 눌렀을때 동적으로 반응
   var product_id = req.params.product_id; //승건 참고
   var member_id = req.row.member_id;
   //var product_id = req.body.product_id; //승건 참고
@@ -276,7 +281,7 @@ router.post('/api/info/:product_id', auth, function(req, res){ // 찜버튼 눌�
     connection.query(checkzzim, datas, function (err, zzim_res) {
       if (err) console.error("err : " + err);
       var zzim_num = zzim_res[1][0].product_interest;
-      console.log(zzim_res[0]);
+      //console.log(zzim_res[0]);
       if (zzim_res[0].length == 0) { //찜을 안한상태일때
         zzim_num = parseInt(zzim_num) + 1;
         var updatezzim =
@@ -332,7 +337,8 @@ router.get('/api/sellwrite', auth, function (req, res, next) { //물건 판매�
   res.send();
 });
 
-router.post('/api/sellwrite', auth, upload.array('img'), function(req,res){ // 게시글 업로드
+
+router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { // 게시글 업로드
   var product_title = req.body.product_title;
   var product_saler = req.row.member_email;
   var product_price = req.body.product_price;
@@ -367,58 +373,83 @@ router.post('/api/sellwrite', auth, upload.array('img'), function(req,res){ // �
   });
 });
 
-router.get('/api/sellupdate', auth, function(req, res){ //물건 판매하기 사이트 불러오기
-    var product_id = req.query.idx;
+router.get('/api/cor/:product_id', auth, function (req, res) { // 수정을 요청하는 자가 판매자가 맞는지 확인
+  var member_email = req.row.member_email;
 
-    pool.getConnection(function(err, connection){
-      if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
-  
-      var sql = "SELECT * FROM products WHERE product_id = ?";
-      connection.query(sql, product_id, function(err, rows){
-        if(err) console.error(err);
-        console.log("update에서 1개 글 조회 결과 확인 : ", rows);
-        res.send(rows);
+  console.log("member_email : ", member_email.length)
+  var product_id = req.params.product_id;
+  //var member_email = req.body.member_email;
+  //var product_id = req.body.product_id;
+  pool.getConnection(function (err, connection) {
+    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+
+    var sql = "SELECT product_saler FROM products WHERE product_id = ?";
+    connection.query(sql, product_id, function (err, result) {
+      if (err) console.error(err);
+      var product_saler = result[0].product_saler;
+      console.log("update에서 1개 글 조회 결과 확인 : ", product_saler.length);
+      console.log(product_saler[0] === member_email[0])
+      console.log(product_saler[1] === member_email[1])
+      console.log(product_saler[2] === member_email[2])
+      console.log(product_saler[3] === member_email[3])
+      console.log(product_saler[4] === member_email[4])
+      console.log(product_saler === member_email)
+      var r = product_saler === member_email
+      res.send(r);
+      connection.release();
+    });
+  });
+
+});
+
+router.get('/api/sellupdate', auth, function (req, res) { //물건 판매하기 사이트 불러오기
+  var product_id = req.query.idx;
+
+  pool.getConnection(function (err, connection) {
+    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+
+    var sql = "SELECT * FROM products WHERE product_id = ?";
+    connection.query(sql, product_id, function (err, rows) {
+      if (err) console.error(err);
+      console.log("update에서 1개 글 조회 결과 확인 : ", rows);
+      res.send(rows);
+      connection.release();
+    });
+  });
+});
+
+router.post('/api/sellupdate', auth, upload.array('img'), function (req, res) { //데이터 업로드
+  var product_id = req.body.product_id;
+  var product_title = req.body.product_title;
+  var product_price = req.body.product_price;
+  var product_state = req.body.product_state; //판매중: 0
+  var product_content = req.body.product_content;
+  var product_image = new Array();
+
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "UPDATE products SET product_title = ?, product_price = ?, product_state = ?, product_content = ? WHERE product_id = ?; DELETE FROM photos WHERE product_id = ? ;"
+    datas = [product_title, product_price, product_state, product_content, product_id, product_id];
+    connection.query(sqlForSelectList, datas, function (err, result) {
+      if (err) console.error("err : " + err);
+      //console.log("insert ID : "+JSON.stringify(result.insertId));
+      //insertID = result.insertId;
+      for (let i = 0; i < req.files.length; i++) {
+        product_image.push([product_id, req.files[i].filename]);
+      };
+      var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
+      connection.query(sqlForPhoto, [product_image], function (err, result) {
+        if (err) console.error("err : " + err);
+        console.log("insert ID : " + JSON.stringify(result.insertId));
+
+        res.send('Success');
         connection.release();
       });
     });
+  });
 });
 
-router.post('/api/sellupdate', upload.array('img'), function(req,res){ //데이터 업로드
-    var product_title = req.body.product_title;
-    var product_saler = req.body.product_saler;
-    var product_price = req.body.product_price;
-    var product_interest = 0;
-    var product_state = 0; //판매중: 0
-    var product_content = req.body.product_content;
-    var product_image = new Array();
-    //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
 
-    pool.getConnection(function(err, connection){
-        var sqlForSelectList = "UPDATE products SET product_title = ?, product_saler = ?, product_price = ?, product_interest = ?, product_state = ?, product_content = ? WHERE product_id = ?;"
-        datas = [product_title, product_saler, product_price, product_interest, product_state, product_content, product_id];
-        connection.query(sqlForSelectList, datas, function(err, result){
-            if(err) console.error("err : "+err);
-            console.log("insert ID : "+JSON.stringify(result.insertId));
-            insertID = result.insertId;
-            for(let i =0; i<req.files.length; i++){
-                 product_image.push([insertID, req.files[i].filename]);
-            };
-            // for(let i =0; i<filename.length; i++){
-            //     product_image.push([insertID, filename[i]]);
-            // }
-            var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
-            connection.query(sqlForPhoto, [product_image], function(err, result){
-                if(err) console.error("err : "+err);
-                console.log("insert ID : "+JSON.stringify(result.insertId));
-
-                res.render('sellwrite', {title: "물건 판매글 등록"});
-                connection.release();
-            });
-        });
-    });
-});
-
-router.get('/api/QnA_list', auth, function(req, res){
+router.get('/api/QnA_list', auth, function (req, res) {
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT qna_title, qna_content FROM qna ;";
     connection.query(sqlForSelectList, function (err, rows) {
@@ -431,7 +462,7 @@ router.get('/api/QnA_list', auth, function(req, res){
   });
 });
 
-router.post('/api/QnA_write', auth, function(req, res){ // 미완성
+router.post('/api/QnA_write', auth, function (req, res) { // 미완성
   // pool.getConnection(function (err, connection) {
   //   var sqlForSelectList = "SELECT qna_title, qna_content FROM qna ;";
   //   connection.query(sqlForSelectList, function (err, rows) {
@@ -444,7 +475,7 @@ router.post('/api/QnA_write', auth, function(req, res){ // 미완성
   // });
 });
 
-router.get('/api/notice_list', auth, function(req, res){
+router.get('/api/notice_list', auth, function (req, res) {
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT notice_title FROM notices ;";
     connection.query(sqlForSelectList, function (err, rows) {
@@ -457,16 +488,16 @@ router.get('/api/notice_list', auth, function(req, res){
   });
 });
 
-router.get('/api/notice_list_write', auth, function(req, res){
+router.get('/api/notice_list_write', auth, function (req, res) {
   var member_email = req.row.member_email;
   //var member_email = req.body.member_email;
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT admin_id FROM admins WHERE admin_email = ?;";
     connection.query(sqlForSelectList, member_email, function (err, rows) {
       if (err) console.error("err : " + err);
-      if(rows == 0){
+      if (rows == 0) {
         res.send(false);
-      }else{
+      } else {
         res.send(true);
       }
       connection.release();
@@ -474,11 +505,10 @@ router.get('/api/notice_list_write', auth, function(req, res){
   });
 });
 
-router.post('/api/notice_list_write', auth, function(req, res){
+router.post('/api/notice_list_write', auth, function (req, res) {
   var member_email = req.row.member_email;
   var notice_title = req.body.notice_title;
   var notice_content = req.body.notice_content;
-  //var member_email = req.body.member_email;
 
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT admin_id FROM admins WHERE admin_email = ?;";
@@ -490,15 +520,58 @@ router.post('/api/notice_list_write', auth, function(req, res){
 
       connection.query(SQL, datas, function (err, rows) {
         if (err) console.error("err : " + err);
-        if(rows.insertID != 0) res.send(true);
+        if (rows.insertID != 0) res.send(true);
         else res.send(false);
-        
+
         connection.release();
       });
     });
   });
 });
 
+router.get('/api/notice/:notice_id', auth, function (req, res) {
+  var notice_id = req.params.notice_id;
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "SELECT * FROM notices WHERE notice_id = ?;";
+    connection.query(sqlForSelectList, notice_id, function (err, rows) {
+      if (err) console.error("err : " + err);
+      console.log("rows : " + JSON.stringify(rows[0]));
+
+      res.send(rows);
+      connection.release();
+    });
+  });
+});
+
+
+router.get('/delete/:product_id', auth, function (req, res) {
+  var member_email = req.row.member_email;
+  console.log("member_email" + member_email);
+  var product_id = req.params.product_id;
+  //console.log("product_id", product_id)
+  //var member_email = req.body.member_email;
+  //var product_id = req.body.product_id;
+  pool.getConnection(function (err, connection) {
+    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+
+    var sql = "SELECT product_saler FROM products WHERE product_id = ?";
+    connection.query(sql, product_id, function (err, result) {
+      if (err) console.error(err);
+      var product_saler = result[0].product_saler;
+      console.log("update에서 1개 글 조회 결과 확인 : ", product_saler);
+      if (product_saler == member_email) {
+        var sqlForSelectList = "DELETE FROM products WHERE product_id = ?; DELETE FROM comments WHERE comment_product_id = ?; DELETE FROM photos WHERE product_id = ?; DELETE FROM interest_products WHERE product_id = ?;";
+        connection.query(sqlForSelectList, [product_id, product_id, product_id, product_id], function (err, rows) {
+          if (err) console.error("err : " + err);
+          res.send(product_saler == member_email);
+        });
+      } else {
+        res.send(product_saler == member_email);
+      }
+      connection.release();
+    });
+  });
+})
 /////////////////////////////////////////////////////////////////////////////
 
 

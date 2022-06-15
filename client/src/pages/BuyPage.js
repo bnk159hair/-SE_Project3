@@ -6,6 +6,7 @@ import BP_ProdInfo from '../components/BP_ProdInfo';
 import BP_ProdImage from '../components/BP_ProdImage';
 import BP_Prod from '../components/BP_Prod';
 import BP_SellerInfo from '../components/BP_SellerInfo';
+import { useCookies } from 'react-cookie';
 
 import NavBar from '../components/NavBar';
 import Info from '../components/Info';
@@ -35,7 +36,7 @@ const BuyPage = (props) => {
   const ProdId = Location.pathname.split('/').slice(-1)[0];
 
   useEffect(() => {
-    axios.get('/info/' + ProdId).then((res) => {
+    axios.get('/api/info/' + ProdId).then((res) => {
       console.log("re?!s" + JSON.stringify(res));
       console.log("!!" + res.data);
       SetProductId(res.data[0][0].product_id);
@@ -63,16 +64,46 @@ const BuyPage = (props) => {
     console.log("Buy button clicked!");
     navigate('/', { replace: true });
   }
+
   const onClickInterest = () => {
     console.log("Interest button clicked!");
-    axios.post('/info/' + ProdId).then((res) => {
-      console.log("SetZ!!" + JSON.stringify(res));
-      if (Z == '찜')
+    axios.post('/api/info/' + ProdId).then((res) => {
+      console.log("response" + res)
+      if (Z == "찜")
         SetZ("찜 해제");
       else
-        SetZ("찜")
+        SetZ("찜");
     })
     //navigate('/', { replace: true });
+  }
+
+
+  const onClickCor = () => {
+    console.log("cor button clicked!");
+    axios.get('/api/cor/' + ProdId).then((res) => {
+      console.log("!@!@!@!@!@!@" + res.data);
+
+      if (res.data === true) {
+        navigate('/updatepage', { replace: true });
+      }
+      else {
+        alert("글 작성자가 아닙니다!");
+      }
+    })
+  }
+
+  const onClickDel = () => {
+    axios.get('/api/delete/' + ProdId).then((res) => {
+      //console.log(res);
+      console.log('Seller' + Seller)
+      if (res.data == true) {
+        alert("글이 삭제되었습니다!");
+        navigate('/', { replace: true });
+      }
+      else {
+        alert("글 작성자가 아닙니다!");
+      }
+    })
   }
 
 
@@ -106,7 +137,8 @@ const BuyPage = (props) => {
                 </TotalPrice>
                 <ButtonBox>
                   <CartBtn onClick={onClickInterest} >{Z}</CartBtn>
-                  <BuyBtn onClick={onClickBuy} >전화번호 보기</BuyBtn>
+                  <BuyBtn onClick={onClickCor} >수정</BuyBtn>
+                  <BuyBtn onClick={onClickDel} >삭제</BuyBtn>
                 </ButtonBox>
               </InfoBox>
             </ItemInfoBox>
@@ -248,7 +280,7 @@ const BuyBtn = styled.button`
   font-size: 16px;
   border-radius: 4px;
   font-weight: bold;
-  width: 49%;
+  width: 20%;
   background-color: blue;
   color: rgb(255, 255, 255);
   margin: 0;

@@ -8,16 +8,26 @@ import BP_Prod from '../components/BP_Prod';
 import BP_SellerInfo from '../components/BP_SellerInfo';
 import NavBar from '../components/NavBar';
 import axios from 'axios';
+import { useEffect } from 'react';
 //props : 
-const SellPage = (props) => {
+const UpdatePage = (props) => {
   //사진등록 추가해야함
   const [ProductTitle, SetProductTitle] = useState('');
   const [ProductPrice, SetProductPrice] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
-  const [ProductSellType, setProductSellType] = useState('');
   const [img, setImage] = useState(null);
   const navigate = useNavigate();
   const formData = new FormData();
+
+  const [PrivTitle, SetPrivTitle] = useState('abc');
+  const [PrivPrice, SetPrivPrice] = useState(999);
+  const [PrivContent, SetPrivContent] = useState('dde');
+
+  useEffect(() => {
+    axios.get('/api/sellupdate').then((res) => {
+      //여기에 필요한거 받아오기
+    })
+  })
 
   const onChange = (e) => {
     console.log(e.target.files[0]);
@@ -44,7 +54,6 @@ const SellPage = (props) => {
 
   };
 
-
   const onClickWrite = () => {
     const formData = new FormData();
     formData.append('img', img);
@@ -53,13 +62,14 @@ const SellPage = (props) => {
     formData.append('product_content', ProductContent);
 
     console.log("Write button clicked!");
-    alert("상품이 등록되었습니다!")
+    alert("상품이 수정되었습니다!")
     //console.log(ProdId);
+    //navigate('/', { replace: true });
     axios.post('http://localhost:3000/api/sellwrite', formData)
       .then(function (res) {
         console.log(res)
+        navigate('/', { replace: true })
       })
-    navigate('/', { replace: true });
   }
 
   return (
@@ -67,7 +77,7 @@ const SellPage = (props) => {
       <NavBar></NavBar>
       <MainContainer>
         <TitleBox>
-          <Title>상품 등록</Title>
+          <Title>글 수정</Title>
         </TitleBox>
         <SignupTitleBox>
           <SignupTitle>상품 정보 입력</SignupTitle>
@@ -81,6 +91,7 @@ const SellPage = (props) => {
                   <input
                     type='text'
                     placeholder='상품이름'
+                    value={PrivTitle}
                     onChange={(e) => {
                       SetProductTitle(e.target.value)
                       console.log(e.target.value)
@@ -94,6 +105,7 @@ const SellPage = (props) => {
                   <input
                     type='number'
                     placeholder='가격'
+                    value={PrivPrice}
                     onChange={(e) => {
                       SetProductPrice(e.target.value)
                       console.log(e.target.value)
@@ -120,6 +132,7 @@ const SellPage = (props) => {
                   <input
                     type='text'
                     placeholder='ex) 이상품은 어쩌구'
+                    value={PrivContent}
                     height='100px'
                     onChange={(e) => {
                       SetProductContent(e.target.value)
@@ -131,7 +144,7 @@ const SellPage = (props) => {
           </table>
         </SignupBox>
         <div>
-          <SignupBtn onClick={onClickWrite}>글쓰기</SignupBtn>
+          <SignupBtn onClick={onClickWrite}>글 수정</SignupBtn>
         </div>
       </MainContainer>
     </Container>
@@ -235,4 +248,4 @@ const SignupBtn = styled.button`
   cursor: pointer;
 `;
 
-export default SellPage;
+export default UpdatePage;
