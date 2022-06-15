@@ -64,7 +64,7 @@ const UpdatePage = (props) => {
     formData.append('product_content', ProductContent);
 
     console.log("Write button clicked!");
-    alert("상품이 수정되었습니다!")
+    alert("상품이 수정되었습니 다!")
     //console.log(ProdId);
     //navigate('/', { replace: true });
     axios.post('http://localhost:3000/api/sellwrite', formData)
