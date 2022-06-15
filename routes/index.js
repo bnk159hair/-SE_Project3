@@ -223,7 +223,7 @@ router.get('/api/member_selling', auth, function (req, res) { // 개인판매상
       connection.query(sqlForSelectList, member_email, function (err, rows) {
         if (err) console.error("err : " + err);
         console.log("rows : " + JSON.stringify(rows[0]));
-
+        Sele
         res.send(rows);
         connection.release();
       });
@@ -361,13 +361,18 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
       for (let i = 0; i < req.files.length; i++) {
         product_image.push([insertID, req.files[i].filename]);
       };
-      var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
+      var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?;";
       connection.query(sqlForPhoto, [product_image], function (err, result) {
         if (err) console.error("err : " + err);
         console.log("insert ID : " + JSON.stringify(result.insertId));
-
-        res.send('Success');
-        connection.release();
+        var sqlForPP = "INSERT INTO products(product_photo) VALUES (?) ;";
+        connection.query(sqlForPP, req.files[0].filename, function (err, result) {
+          if (err) console.error("err : " + err);
+          console.log("insert ID : " + JSON.stringify(result.insertId));
+  
+          res.send('Success');
+          connection.release();
+        });
       });
     });
   });
