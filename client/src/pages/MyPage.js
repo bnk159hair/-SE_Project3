@@ -8,42 +8,40 @@ import BP_SellerInfo from '../components/BP_SellerInfo';
 import axios from 'axios';
 
 const List = [];
-const [SList, SetSList]=useState()
 //props : 
 const sellList = (props) => {
-  return(
+  return (
     <>
-    <tr> 
-      <td>{props.title}</td>
-      <td>1</td>
-      <td>{props.price}</td>
-      <td>fuck</td>
-      <td>you</td>
-    </tr>
+      <tr>
+        <td>{props.title}</td>
+        <td>1</td>
+        <td>{props.price}</td>
+        <td>fuck</td>
+        <td>you</td>
+      </tr>
     </>
   );
 }
 
 const MyPage = (props) => {
-  
+
   useEffect(() => {
     console.log('11233')
     axios.get('/api/member_selling')
-    .then((res) => {
-      console.log('asdf');
-      console.log(res.data[0]);
+      .then((res) => {
+        console.log('asdf');
+        console.log(res.data[0]);
 
-      const length = res.data.length;
-      console.log(length);
-      console.log(res.data[0].product_title)
-      for(var i = 0; i < length; i++){ 
-        SetSList
-        List.push(
-          <sellList title={res.data[i].product_title} price={res.data[i].product_price} />
-        );
-        console.log(res.data[i].product_title  + ' ' + res.data[i].product_price);
-      }
-    })
+        const length = res.data.length;
+        console.log(length);
+        console.log(res.data[0].product_title)
+        for (var i = 0; i < length; i++) {
+          List.push(
+            <sellList title={res.data[i].product_title} price={res.data[i].product_price} />
+          );
+          console.log(res.data[i].product_title + ' ' + res.data[i].product_price);
+        }
+      })
   })
 
   return (
