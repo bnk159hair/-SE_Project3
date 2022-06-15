@@ -80,8 +80,8 @@ const BuyPage = (props) => {
 
   const onClickCor = () => {
     console.log("cor button clicked!");
-    axios.get('/api/cor').then((res) => {
-      //console.log(res);
+    axios.get('/api/cor/' + ProdId).then((res) => {
+      console.log(res);
       if (res.body == true) {
         navigate('/updatepage', { replace: true });
       }
@@ -92,7 +92,7 @@ const BuyPage = (props) => {
   }
 
   const onClickDel = () => {
-    axios.get('/api/del/').then((res) => {
+    axios.get('/api/del/' + ProdId).then((res) => {
       console.log(res);
       if (res.body == true) {
         alert("글이 삭제되었습니다!");

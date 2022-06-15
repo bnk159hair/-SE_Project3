@@ -55,11 +55,11 @@ const SellPage = (props) => {
     console.log("Write button clicked!");
     alert("상품이 등록되었습니다!")
     //console.log(ProdId);
-    //navigate('/', { replace: true });
     axios.post('http://localhost:3000/api/sellwrite', formData)
       .then(function (res) {
         console.log(res)
       })
+    navigate('/', { replace: true });
   }
 
   return (
