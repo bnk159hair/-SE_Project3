@@ -214,7 +214,8 @@ router.post('/api/users/comment', function(req, res){
 //////////////////////////////////////////////////////////////////// 하영 코드 /////////////////////////////////////////////////////////////////////////
 router.get('/api/member_selling', auth, function (req, res) { // 개인판매상품 목록 - 테스트 완료
   try {
-    var member_email = req.row.product_saler;
+    var member_email = req.row.member_email;
+    console.log("#!@#!@#!@#!@#"+member_email);
     pool.getConnection(function (err, connection) {
       var sqlForSelectList = "SELECT * FROM products WHERE product_saler = ? ;";
       connection.query(sqlForSelectList, member_email, function (err, rows) {
