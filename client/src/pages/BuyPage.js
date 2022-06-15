@@ -25,7 +25,9 @@ const BuyPage = (props) => {
   const [ProductLocation, SetProductLocation] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
   const [Z, SetZ] = useState('찜');
-  const [ProductImg, SetProductImg] = useState('');
+  const [ProductImg1, SetProductImg1] = useState('/');
+  const [ProductImg2, SetProductImg2] = useState('/');
+  const [ProductImg3, SetProductImg3] = useState('/');
   const [Phone, SetPhone] = useState('010-1234-1234')
 
   let Location = useLocation();
@@ -57,7 +59,10 @@ const BuyPage = (props) => {
       SetProductContent(res.data[0][0].product_content);
       SetSeller(res.data[1][0].member_email)
       SetScore(res.data[1][0].member_score)
-      SetProductImg(res.data[2][0].photo_data)
+      SetProductImg1(res.data[2][0].photo_data)
+      SetProductImg2(res.data[2][1].photo_data)
+      SetProductImg3(res.data[2][2].photo_data)
+      console.log(res.data[2][1])
       //console.log("!!!!" + res.data[1][0].member_email)
     })
   }, [])
@@ -117,7 +122,9 @@ const BuyPage = (props) => {
         <Container>
           <ItemBox>
             <ImgBox>
-              <img src={SetProductImg} alt='상품이미지' />
+              <img src={'/' + ProductImg1} alt='상품이미지' />
+              <img src={'/' + ProductImg2} alt='상품이미지' />
+              <img src={'/' + ProductImg3} alt='상품이미지' />
             </ImgBox>
             <ItemInfoBox>
               <InfoBox>
