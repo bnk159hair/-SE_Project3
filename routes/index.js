@@ -280,7 +280,7 @@ router.post('/api/info/:product_id', auth, function (req, res) { // 찜버튼 �
     connection.query(checkzzim, datas, function (err, zzim_res) {
       if (err) console.error("err : " + err);
       var zzim_num = zzim_res[1][0].product_interest;
-      console.log(zzim_res[0]);
+      //console.log(zzim_res[0]);
       if (zzim_res[0].length == 0) { //찜을 안한상태일때
         zzim_num = parseInt(zzim_num) + 1;
         var updatezzim =
@@ -372,33 +372,49 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
   });
 });
 
-router.get('/api/cor', auth, function(req, res){ // 수정을 요청하는 자가 판매자가 맞는지 확인
+router.get('/api/cor/:product_id', auth, function (req, res) { // 수정을 요청하는 자가 판매자가 맞는지 확인
   var member_email = req.row.member_email;
+
+  console.log("member_email : ", member_email.length)
   var product_id = req.params.product_id;
+<<<<<<< HEAD
+  //var member_email = req.body.member_email;
+  //var product_id = req.body.product_id;
+  pool.getConnection(function (err, connection) {
+    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+=======
   pool.getConnection(function(err, connection){
     if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+>>>>>>> 561b69e52a91f855d9396bf1621fdccf1297946a
 
     var sql = "SELECT product_saler FROM products WHERE product_id = ?";
-    connection.query(sql, product_id, function(err, result){
-      if(err) console.error(err);
+    connection.query(sql, product_id, function (err, result) {
+      if (err) console.error(err);
       var product_saler = result[0].product_saler;
-      console.log("update에서 1개 글 조회 결과 확인 : ", product_saler);
-      res.send(product_saler == member_email);
+      console.log("update에서 1개 글 조회 결과 확인 : ", product_saler.length);
+      console.log(product_saler[0] === member_email[0])
+      console.log(product_saler[1] === member_email[1])
+      console.log(product_saler[2] === member_email[2])
+      console.log(product_saler[3] === member_email[3])
+      console.log(product_saler[4] === member_email[4])
+      console.log(product_saler === member_email)
+      var r = product_saler === member_email
+      res.send(r);
       connection.release();
     });
   });
 
 });
 
-router.get('/api/sellupdate', auth, function(req, res){ //물건 판매하기 사이트 불러오기
+router.get('/api/sellupdate', auth, function (req, res) { //물건 판매하기 사이트 불러오기
   var product_id = req.query.idx;
 
-  pool.getConnection(function(err, connection){
-    if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+  pool.getConnection(function (err, connection) {
+    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
 
     var sql = "SELECT * FROM products WHERE product_id = ?";
-    connection.query(sql, product_id, function(err, rows){
-      if(err) console.error(err);
+    connection.query(sql, product_id, function (err, rows) {
+      if (err) console.error(err);
       console.log("update에서 1개 글 조회 결과 확인 : ", rows);
       res.send(rows);
       connection.release();
@@ -406,7 +422,7 @@ router.get('/api/sellupdate', auth, function(req, res){ //물건 판매하기 �
   });
 });
 
-router.post('/api/sellupdate', auth, upload.array('img'), function(req,res){ //데이터 업로드
+router.post('/api/sellupdate', auth, upload.array('img'), function (req, res) { //데이터 업로드
   var product_id = req.body.product_id;
   var product_title = req.body.product_title;
   var product_price = req.body.product_price;
@@ -414,21 +430,30 @@ router.post('/api/sellupdate', auth, upload.array('img'), function(req,res){ //�
   var product_content = req.body.product_content;
   var product_image = new Array();
 
-  pool.getConnection(function(err, connection){
+  pool.getConnection(function (err, connection) {
     var sqlForSelectList = "UPDATE products SET product_title = ?, product_price = ?, product_state = ?, product_content = ? WHERE product_id = ?; DELETE FROM photos WHERE product_id = ? ;"
     datas = [product_title, product_price, product_state, product_content, product_id, product_id];
+<<<<<<< HEAD
+    connection.query(sqlForSelectList, datas, function (err, result) {
+      if (err) console.error("err : " + err);
+      //console.log("insert ID : "+JSON.stringify(result.insertId));
+      //insertID = result.insertId;
+      for (let i = 0; i < req.files.length; i++) {
+        product_image.push([product_id, req.files[i].filename]);
+=======
     connection.query(sqlForSelectList, datas, function(err, result){
       if(err) console.error("err : "+err);
       for(let i =0; i<req.files.length; i++){
             product_image.push([product_id, req.files[i].filename]);
+>>>>>>> 561b69e52a91f855d9396bf1621fdccf1297946a
       };
       var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
-      connection.query(sqlForPhoto, [product_image], function(err, result){
-          if(err) console.error("err : "+err);
-          console.log("insert ID : "+JSON.stringify(result.insertId));
+      connection.query(sqlForPhoto, [product_image], function (err, result) {
+        if (err) console.error("err : " + err);
+        console.log("insert ID : " + JSON.stringify(result.insertId));
 
-          res.send('Success');
-          connection.release();
+        res.send('Success');
+        connection.release();
       });
     });
   });
@@ -515,6 +540,9 @@ router.post('/api/notice_list_write', auth, function (req, res) {
   });
 });
 
+<<<<<<< HEAD
+router.get('/api/delete/:product_id', auth, function (req, res) {
+=======
 router.get('/api/notice/:notice_id', auth, function (req, res) {
   var notice_id = req.params.notice_id;
   pool.getConnection(function (err, connection) {
@@ -531,25 +559,28 @@ router.get('/api/notice/:notice_id', auth, function (req, res) {
 
 
 router.get('/delete/:product_id', auth, function(req, res){
+>>>>>>> 561b69e52a91f855d9396bf1621fdccf1297946a
   var member_email = req.row.member_email;
+  console.log("member_email" + member_email);
   var product_id = req.params.product_id;
+  //console.log("product_id", product_id)
   //var member_email = req.body.member_email;
   //var product_id = req.body.product_id;
-  pool.getConnection(function(err, connection){
-    if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+  pool.getConnection(function (err, connection) {
+    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
 
     var sql = "SELECT product_saler FROM products WHERE product_id = ?";
-    connection.query(sql, product_id, function(err, result){
-      if(err) console.error(err);
+    connection.query(sql, product_id, function (err, result) {
+      if (err) console.error(err);
       var product_saler = result[0].product_saler;
       console.log("update에서 1개 글 조회 결과 확인 : ", product_saler);
-      if(product_saler == member_email){
+      if (product_saler == member_email) {
         var sqlForSelectList = "DELETE FROM products WHERE product_id = ?; DELETE FROM comments WHERE comment_product_id = ?; DELETE FROM photos WHERE product_id = ?; DELETE FROM interest_products WHERE product_id = ?;";
         connection.query(sqlForSelectList, [product_id, product_id, product_id, product_id], function (err, rows) {
           if (err) console.error("err : " + err);
           res.send(product_saler == member_email);
         });
-      }else{
+      } else {
         res.send(product_saler == member_email);
       }
       connection.release();

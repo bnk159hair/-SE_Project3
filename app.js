@@ -11,8 +11,8 @@ var myPageRouter = require('./routes/mypage'); // 하영 추가
 
 var app = express();
 
-const port=5000; // React가 3000번 port를 사용하기 때문에, node는 5000으로 지정
-app.listen(port, ()=>{console.log(`Listening on port ${port}`)});
+const port = 5000; // React가 3000번 port를 사용하기 때문에, node는 5000으로 지정
+app.listen(port, () => { console.log(`Listening on port ${port}`) });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,12 +29,12 @@ app.use('/users', usersRouter);
 app.use('/register', registerRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

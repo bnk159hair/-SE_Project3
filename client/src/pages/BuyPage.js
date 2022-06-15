@@ -36,7 +36,7 @@ const BuyPage = (props) => {
   const ProdId = Location.pathname.split('/').slice(-1)[0];
 
   useEffect(() => {
-    axios.get('/info/' + ProdId).then((res) => {
+    axios.get('/api/info/' + ProdId).then((res) => {
       console.log("re?!s" + JSON.stringify(res));
       console.log("!!" + res.data);
       SetProductId(res.data[0][0].product_id);
@@ -64,10 +64,15 @@ const BuyPage = (props) => {
     console.log("Buy button clicked!");
     navigate('/', { replace: true });
   }
+
   const onClickInterest = () => {
     console.log("Interest button clicked!");
-    axios.post('/info/' + ProdId).then((res) => {
+    axios.post('/api/info/' + ProdId).then((res) => {
       console.log("response" + res)
+      if (Z == "찜")
+        SetZ("찜 해제");
+      else
+        SetZ("찜");
     })
     //navigate('/', { replace: true });
   }
@@ -75,13 +80,30 @@ const BuyPage = (props) => {
 
   const onClickCor = () => {
     console.log("cor button clicked!");
-    navigate('/CorPage', { replace: true });
+    axios.get('/api/cor/' + ProdId).then((res) => {
+      console.log("!@!@!@!@!@!@" + res.data);
+
+      if (res.data === true) {
+        navigate('/updatepage', { replace: true });
+      }
+      else {
+        alert("글 작성자가 아닙니다!");
+      }
+    })
   }
 
   const onClickDel = () => {
-
-
-    navigate('/', { replace: true });
+    axios.get('/api/delete/' + ProdId).then((res) => {
+      //console.log(res);
+      console.log('Seller' + Seller)
+      if (res.data == true) {
+        alert("글이 삭제되었습니다!");
+        navigate('/', { replace: true });
+      }
+      else {
+        alert("글 작성자가 아닙니다!");
+      }
+    })
   }
 
 
