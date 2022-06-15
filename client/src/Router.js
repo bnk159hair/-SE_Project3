@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Main from './Main';
 import LoginPage from './pages/LoginPage';
+import LogoutPage from './pages/LogoutPage';
 import SignupPage from './pages/SignupPage';
 import BuyPage from './pages/BuyPage';
 import SellPage from './pages/SellPage';
@@ -20,6 +21,7 @@ const Router = () => {
             <Route path="/" element={<Main />} />
             <Route path="/page1" element={<Main />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/logout" element={<LogoutPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/buypage/*" element={<BuyPage />} />
             <Route path="/sellpage" element={<SellPage />} />

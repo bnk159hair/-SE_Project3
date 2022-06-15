@@ -32,8 +32,24 @@ const NavBar = () => {
     // 검색어 저장
     const [search, setSearch] = useState('');
     const [loginCookie, setLoginCookie] = useState(cookies.get('login'));
-    
+    const [catBut, setCatBut] = useState('Login');
+    const [catLink, setCatLink] = useState('/login');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setLoginCookie(cookies.get('login'));
+        console.log(loginCookie);
+        if(loginCookie === 'true'){
+            setCatBut('MyPage');
+            setCatLink('/mypage');
+        }
+        else{
+            setCatBut('Login');
+            setCatLink('/login');
+        }
+        console.log(catBut);
+        console.log(catLink);
+    })
 
     const onSearch = (e) => {
         // button 클릭후 페이지 초기화면으로의 이동을 막아줍니다.
@@ -42,7 +58,6 @@ const NavBar = () => {
         // 검색어가 없는 경우 전체 리스트를 반환
         if(search === null || search === ''){
             alert('검색어를 입력하세요.');
-            alert(loginCookie);
             setIsMain(true);
         }
         else {
@@ -128,8 +143,8 @@ const NavBar = () => {
                 <Link to="/contact" className="category">Contact</Link>
                 <div className="category">Cart</div>
                 <Link to={loginCookie ? '/sellpage' : '/login'} className="category" onClick={clickSell}>Sell</Link>
-                <Link to={loginCookie ? '/mypage' : '/login'} className="category">
-                    {loginCookie ? "My Page" : "Login"}
+                <Link to={catLink} className="category">
+                    {catBut}
                 </Link>
             </div>
             
