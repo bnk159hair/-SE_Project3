@@ -242,8 +242,8 @@ router.get('/api/info/:product_id', auth, function (req, res) { // 특정 판매
   //var member_id = req.body.member_id;
   try {
     pool.getConnection(function (err, connection) {
-      var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ;" // 상품 정보 가져오기
-      connection.query(sqlForSelectList, product_id, function (err, rows) { // rows에 상품 정보 담김
+      var sqlForSelectList = "SELECT * FROM products WHERE product_id = ? ; SELECT * FROM comments WHERE comment_product_id = ? ;" // 상품 정보 가져오기
+      connection.query(sqlForSelectList, [product_id, product_id], function (err, rows) { // rows에 상품 정보 담김
         if (err) console.error("err : " + err);
         //console.log("rows : " + JSON.stringify(rows));
         var product_saler = rows[0].product_saler;
@@ -373,16 +373,35 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
   });
 });
 
+router.get('/api/cor', auth, function(req, res){ // 수정을 요청하는 자가 판매자가 맞는지 확인
+  var member_email = req.row.member_email;
+  var product_id = req.params.product_id;
+  //var member_email = req.body.member_email;
+  //var product_id = req.body.product_id;
+  pool.getConnection(function(err, connection){
+    if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
 
-router.get('/api/sellupdate', auth, function (req, res) { //물건 판매하기 사이트 불러오기
+    var sql = "SELECT product_saler FROM products WHERE product_id = ?";
+    connection.query(sql, product_id, function(err, result){
+      if(err) console.error(err);
+      var product_saler = result[0].product_saler;
+      console.log("update에서 1개 글 조회 결과 확인 : ", product_saler);
+      res.send(product_saler == member_email);
+      connection.release();
+    });
+  });
+
+});
+
+router.get('/api/sellupdate', auth, function(req, res){ //물건 판매하기 사이트 불러오기
   var product_id = req.query.idx;
 
-  pool.getConnection(function (err, connection) {
-    if (err) console.error("커넥션 객체 얻어오기 에러 : ", err);
+  pool.getConnection(function(err, connection){
+    if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
 
     var sql = "SELECT * FROM products WHERE product_id = ?";
-    connection.query(sql, product_id, function (err, rows) {
-      if (err) console.error(err);
+    connection.query(sql, product_id, function(err, rows){
+      if(err) console.error(err);
       console.log("update에서 1개 글 조회 결과 확인 : ", rows);
       res.send(rows);
       connection.release();
@@ -390,38 +409,39 @@ router.get('/api/sellupdate', auth, function (req, res) { //물건 판매하기 
   });
 });
 
+router.post('/api/sellupdate', auth, upload.array('img'), function(req,res){ //데이터 업로드
+    var product_id = req.body.product_id;
+    var product_title = req.body.product_title;
+    //var product_saler = req.row.member_email;
+    var product_price = req.body.product_price;
+    //var product_interest = 0;
+    var product_state = req.body.product_state; //판매중: 0
+    var product_content = req.body.product_content;
+    var product_image = new Array();
+    //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
 
-router.post('/api/sellupdate', upload.array('img'), function (req, res) { //데이터 업로드
-  var product_title = req.body.product_title;
-  var product_saler = req.body.product_saler;
-  var product_price = req.body.product_price;
-  var product_interest = 0;
-  var product_state = 0; //판매중: 0
-  var product_content = req.body.product_content;
-  var product_image = new Array();
-  //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
+    pool.getConnection(function(err, connection){
+        var sqlForSelectList = "UPDATE products SET product_title = ?, product_price = ?, product_state = ?, product_content = ? WHERE product_id = ?; DELETE FROM photos WHERE product_id = ? ;"
+        datas = [product_title, product_price, product_state, product_content, product_id, product_id];
+        connection.query(sqlForSelectList, datas, function(err, result){
+            if(err) console.error("err : "+err);
+            //console.log("insert ID : "+JSON.stringify(result.insertId));
+            //insertID = result.insertId;
+            for(let i =0; i<req.files.length; i++){
+                 product_image.push([product_id, req.files[i].filename]);
+            };
+            // for(let i =0; i<filename.length; i++){
+            //     product_image.push([insertID, filename[i]]);
+            // }
+            var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
+            connection.query(sqlForPhoto, [product_image], function(err, result){
+                if(err) console.error("err : "+err);
+                console.log("insert ID : "+JSON.stringify(result.insertId));
 
-  pool.getConnection(function (err, connection) {
-    var sqlForSelectList = "UPDATE products SET product_title = ?, product_saler = ?, product_price = ?, product_interest = ?, product_state = ?, product_content = ? WHERE product_id = ?;"
-    datas = [product_title, product_saler, product_price, product_interest, product_state, product_content, product_id];
-    connection.query(sqlForSelectList, datas, function (err, result) {
-      if (err) console.error("err : " + err);
-      console.log("insert ID : " + JSON.stringify(result.insertId));
-      insertID = result.insertId;
-      for (let i = 0; i < req.files.length; i++) {
-        product_image.push([insertID, req.files[i].filename]);
-      };
-      // for(let i =0; i<filename.length; i++){
-      //     product_image.push([insertID, filename[i]]);
-      // }
-      var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
-      connection.query(sqlForPhoto, [product_image], function (err, result) {
-        if (err) console.error("err : " + err);
-        console.log("insert ID : " + JSON.stringify(result.insertId));
-
-        res.render('sellwrite', { title: "물건 판매글 등록" });
-        connection.release();
-      });
+                res.send('Success');
+                connection.release();
+            });
+        });
     });
   });
 });
@@ -507,6 +527,18 @@ router.post('/api/notice_list_write', auth, function (req, res) {
   });
 });
 
+router.get('/delete/:product_id', auth, function(req, res){
+  var product_id = req.params.product_id;
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "DELETE FROM products WHERE product_id = ?; DELETE FROM comments WHERE comment_product_id = ?; DELETE FROM photos WHERE product_id = ?; DELETE FROM interest_products WHERE product_id = ?;";
+    connection.query(sqlForSelectList, [product_id, product_id, product_id, product_id], function (err, rows) {
+      if (err) console.error("err : " + err);
+
+      connection.release();
+      
+    });
+  });
+})
 /////////////////////////////////////////////////////////////////////////////
 
 
