@@ -15,6 +15,7 @@ const UpdatePage = (props) => {
   const [ProductTitle, SetProductTitle] = useState('');
   const [ProductPrice, SetProductPrice] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
+  const [ProductState, SetProductState] = useState(0);
   const [img, setImage] = useState(null);
   const navigate = useNavigate();
   const formData = new FormData();
@@ -62,6 +63,7 @@ const UpdatePage = (props) => {
     formData.append('product_title', ProductTitle);
     formData.append('product_price', ProductPrice);
     formData.append('product_content', ProductContent);
+    formData.append('product_state', ProductState);
 
     console.log("Write button clicked!");
     alert("상품이 수정되었습니 다!")
@@ -134,6 +136,20 @@ const UpdatePage = (props) => {
                   <input
                     type='text'
                     placeholder='ex) 이상품은 어쩌구'
+                    value={PrivContent}
+                    height='100px'
+                    onChange={(e) => {
+                      SetProductContent(e.target.value)
+                    }}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>거래상태</th>
+                <td>
+                  <input
+                    type='text'
+                    placeholder='ex) 판매중 or 거래완료'
                     value={PrivContent}
                     height='100px'
                     onChange={(e) => {
