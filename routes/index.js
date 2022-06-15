@@ -520,14 +520,28 @@ router.post('/api/notice_list_write', auth, function(req, res){
 });
 
 router.get('/delete/:product_id', auth, function(req, res){
+  var member_email = req.row.member_email;
   var product_id = req.params.product_id;
-  pool.getConnection(function (err, connection) {
-    var sqlForSelectList = "DELETE FROM products WHERE product_id = ?; DELETE FROM comments WHERE comment_product_id = ?; DELETE FROM photos WHERE product_id = ?; DELETE FROM interest_products WHERE product_id = ?;";
-    connection.query(sqlForSelectList, [product_id, product_id, product_id, product_id], function (err, rows) {
-      if (err) console.error("err : " + err);
+  //var member_email = req.body.member_email;
+  //var product_id = req.body.product_id;
+  pool.getConnection(function(err, connection){
+    if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
 
+    var sql = "SELECT product_saler FROM products WHERE product_id = ?";
+    connection.query(sql, product_id, function(err, result){
+      if(err) console.error(err);
+      var product_saler = result[0].product_saler;
+      console.log("update에서 1개 글 조회 결과 확인 : ", product_saler);
+      if(product_saler == member_email){
+        var sqlForSelectList = "DELETE FROM products WHERE product_id = ?; DELETE FROM comments WHERE comment_product_id = ?; DELETE FROM photos WHERE product_id = ?; DELETE FROM interest_products WHERE product_id = ?;";
+        connection.query(sqlForSelectList, [product_id, product_id, product_id, product_id], function (err, rows) {
+          if (err) console.error("err : " + err);
+          res.send(product_saler == member_email);
+        });
+      }else{
+        res.send(product_saler == member_email);
+      }
       connection.release();
-      
     });
   });
 })
