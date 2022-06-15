@@ -16,14 +16,16 @@ const UpdatePage = (props) => {
   const [ProductPrice, SetProductPrice] = useState(0);
   const [ProductContent, SetProductContent] = useState('');
   const [ProductState, SetProductState] = useState(0);
+  const [Temp, SetTemp] = useState('');
   const [img, setImage] = useState(null);
   const navigate = useNavigate();
   const formData = new FormData();
 
-  const [PrivTitle, SetPrivTitle] = useState('abc');
-  const [PrivPrice, SetPrivPrice] = useState(999);
-  const [PrivContent, SetPrivContent] = useState('dde');
+  const [PrivTitle, SetPrivTitle] = useState('이름');
+  const [PrivPrice, SetPrivPrice] = useState(1000);
+  const [PrivContent, SetPrivContent] = useState('판매중');
 
+  var temp1 = PrivTitle;
   useEffect(() => {
     axios.get('/api/sellupdate').then((res) => {
       //여기에 필요한거 받아오기
@@ -95,7 +97,6 @@ const UpdatePage = (props) => {
                   <input
                     type='text'
                     placeholder='상품이름'
-                    value={PrivTitle}
                     onChange={(e) => {
                       SetProductTitle(e.target.value)
                       console.log(e.target.value)
@@ -109,7 +110,6 @@ const UpdatePage = (props) => {
                   <input
                     type='number'
                     placeholder='가격'
-                    value={PrivPrice}
                     onChange={(e) => {
                       SetProductPrice(e.target.value)
                       console.log(e.target.value)
@@ -136,7 +136,6 @@ const UpdatePage = (props) => {
                   <input
                     type='text'
                     placeholder='ex) 이상품은 어쩌구'
-                    value={PrivContent}
                     height='100px'
                     onChange={(e) => {
                       SetProductContent(e.target.value)
@@ -150,10 +149,11 @@ const UpdatePage = (props) => {
                   <input
                     type='text'
                     placeholder='ex) 판매중 or 거래완료'
-                    value={PrivContent}
                     height='100px'
                     onChange={(e) => {
-                      SetProductContent(e.target.value)
+                      SetTemp(e.target.value)
+                      if (Temp == '거래완료')
+                        SetProductState(2)
                     }}
                   />
                 </td>
