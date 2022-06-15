@@ -50,6 +50,8 @@ const UpdatePage = (props) => {
     axios.post('http://localhost:3000/api/upload', fd, config).then((res) => {
 
       console.log(res);
+
+      navigate('/', { replace: true });
     });
 
   };
@@ -68,8 +70,8 @@ const UpdatePage = (props) => {
     axios.post('http://localhost:3000/api/sellwrite', formData)
       .then(function (res) {
         console.log(res)
-        navigate('/', { replace: true })
       })
+    navigate('/', { replace: true })
   }
 
   return (
