@@ -280,7 +280,7 @@ router.post('/api/info/:product_id', auth, function (req, res) { // 찜버튼 �
     connection.query(checkzzim, datas, function (err, zzim_res) {
       if (err) console.error("err : " + err);
       var zzim_num = zzim_res[1][0].product_interest;
-      console.log(zzim_res[0]);
+      //console.log(zzim_res[0]);
       if (zzim_res[0].length == 0) { //찜을 안한상태일때
         zzim_num = parseInt(zzim_num) + 1;
         var updatezzim =
