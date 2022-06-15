@@ -65,6 +65,7 @@ const NavBar = () => {
                     searchList.push(
                         <ProductInfo id={res.data.rows[step].produt_id} imageLink="./images/logo192.png" productName={res.data.rows[step].product_title} name={res.data.rows[step].product_saler} productInterest={res.data.rows[step].product_interest} price={res.data.rows[step].product_price}/>
                     );
+                    console.log(searchList);
                 }
                 console.log('move to search tap');
                 navigate('/search', { replace: true });
