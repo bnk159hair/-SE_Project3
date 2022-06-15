@@ -9,6 +9,8 @@ const LogoutPage = () => {
     const onClick = (e) => {
         e.preventDefault();
         setCookie('login', false);
+        setCookie('id', '');
+        setCookie('password', '');
         navigate('/', {replace: true});
     }
 

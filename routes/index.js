@@ -41,11 +41,7 @@ const upload = multer({
 router.get('/api', (req, res, next) => {
   console.log("hello");
   pool.getConnection(function (err, connection) {
-    var sqlForSelectList = "SELECT product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=0 ORDER BY product_interest DESC LIMIT 5) AS T_0\
-    UNION ALL\
-    SELECT  product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=4 ORDER BY product_interest DESC LIMIT 5) AS T_4\
-    UNION ALL\
-    SELECT  product_id, product_title, product_saler, product_price, product_interest, product_category FROM (SELECT * FROM products WHERE product_category=7 ORDER BY product_interest DESC LIMIT 5) AS T_7;"
+    var sqlForSelectList = "SELECT * FROM products ORDER BY product_interest DESC  LIMIT 15"
     connection.query(sqlForSelectList, function (err, rows) {
       console.log("hello");
 
@@ -363,11 +359,13 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
         product_image.push([insertID, req.files[i].filename]);
       };
       var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?;";
-      connection.query(sqlForPhoto, [product_image], function (err, result) {
+      connection.query(sqlForPhoto, [product_image], function (err, res) {
         if (err) console.error("err : " + err);
-        console.log("insert ID : " + JSON.stringify(result.insertId));
-        var sqlForPP = "INSERT INTO products(product_photo) VALUES (?) ;";
-        connection.query(sqlForPP, req.files[0].filename, function (err, result) {
+        //console.log("insert ID : " + JSON.stringify(result.insertId));
+        var sqlForPP = "UPDATE products SET product_photo = ? WHERE product_id = ?;";
+        var temp = req.files[0].filename;
+        console.log(typeof(temp));
+        connection.query(sqlForPP, [temp, insertID], function (err, result) {
           if (err) console.error("err : " + err);
           console.log("insert ID : " + JSON.stringify(result.insertId));
   
