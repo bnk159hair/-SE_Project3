@@ -1,6 +1,7 @@
 
 import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
+import {Link} from 'react-router-dom'
 import BP_ProdInfo from '../components/BP_ProdInfo';
 import BP_ProdImage from '../components/BP_ProdImage';
 import BP_Prod from '../components/BP_Prod';
@@ -46,12 +47,15 @@ const MyPage = (props) => {
 
   return (
     <>
+    
+      
       <Container>
+        <Link to='/logout'>로그아웃</Link>
         <Title>
-          주문목록/배송조회
+          판매목록/배송조회
           <CurrentPage>
             <RightArrow></RightArrow>
-            <Strong>01 주문목록/배송조회</Strong>
+            <Strong>01 판매목록/배송조회</Strong>
           </CurrentPage>
         </Title>
         <Subtitle>주문상품 정보</Subtitle>
