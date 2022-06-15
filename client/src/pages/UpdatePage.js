@@ -68,6 +68,7 @@ const UpdatePage = (props) => {
     axios.post('http://localhost:3000/api/sellwrite', formData)
       .then(function (res) {
         console.log(res)
+        navigate('/', { replace: true })
       })
   }
 
@@ -76,7 +77,7 @@ const UpdatePage = (props) => {
       <NavBar></NavBar>
       <MainContainer>
         <TitleBox>
-          <Title>상품 등록</Title>
+          <Title>글 수정</Title>
         </TitleBox>
         <SignupTitleBox>
           <SignupTitle>상품 정보 입력</SignupTitle>

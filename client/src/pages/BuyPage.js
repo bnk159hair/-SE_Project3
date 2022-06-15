@@ -81,8 +81,9 @@ const BuyPage = (props) => {
   const onClickCor = () => {
     console.log("cor button clicked!");
     axios.get('/api/cor/' + ProdId).then((res) => {
-      console.log(res);
-      if (res.body == true) {
+      console.log("!@!@!@!@!@!@" + res.data);
+
+      if (res.data === true) {
         navigate('/updatepage', { replace: true });
       }
       else {
@@ -92,9 +93,10 @@ const BuyPage = (props) => {
   }
 
   const onClickDel = () => {
-    axios.get('/api/del/' + ProdId).then((res) => {
-      console.log(res);
-      if (res.body == true) {
+    axios.get('/api/delete/' + ProdId).then((res) => {
+      //console.log(res);
+      console.log('Seller' + Seller)
+      if (res.data == true) {
         alert("글이 삭제되었습니다!");
         navigate('/', { replace: true });
       }
