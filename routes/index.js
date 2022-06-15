@@ -217,7 +217,7 @@ router.post('/api/users/comment', function (req, res) {
 //////////////////////////////////////////////////////////////////// 하영 코드 /////////////////////////////////////////////////////////////////////////
 router.get('/api/member_selling', auth, function (req, res) { // 개인판매상품 목록 - 테스트 완료
   try {
-    var member_email = req.row.product_saler;
+    var member_email = req.row.member_email;
     pool.getConnection(function (err, connection) {
       var sqlForSelectList = "SELECT * FROM products WHERE product_saler = ? ;";
       connection.query(sqlForSelectList, member_email, function (err, rows) {
@@ -345,7 +345,6 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
   var product_state = 0; //판매중: 0
   var product_content = req.body.product_content;
   var product_image = new Array();
-  console.log("111" + product_saler)
   //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
 
   pool.getConnection(function (err, connection) {
@@ -376,8 +375,6 @@ router.post('/api/sellwrite', auth, upload.array('img'), function (req, res) { /
 router.get('/api/cor', auth, function(req, res){ // 수정을 요청하는 자가 판매자가 맞는지 확인
   var member_email = req.row.member_email;
   var product_id = req.params.product_id;
-  //var member_email = req.body.member_email;
-  //var product_id = req.body.product_id;
   pool.getConnection(function(err, connection){
     if(err) console.error("커넥션 객체 얻어오기 에러 : ", err);
 
@@ -412,27 +409,19 @@ router.get('/api/sellupdate', auth, function(req, res){ //물건 판매하기 �
 router.post('/api/sellupdate', auth, upload.array('img'), function(req,res){ //데이터 업로드
   var product_id = req.body.product_id;
   var product_title = req.body.product_title;
-  //var product_saler = req.row.member_email;
   var product_price = req.body.product_price;
-  //var product_interest = 0;
   var product_state = req.body.product_state; //판매중: 0
   var product_content = req.body.product_content;
   var product_image = new Array();
-  //var filename = ['a.jpg', 'b.jpg', 'c.jpg'];// for Test
 
   pool.getConnection(function(err, connection){
     var sqlForSelectList = "UPDATE products SET product_title = ?, product_price = ?, product_state = ?, product_content = ? WHERE product_id = ?; DELETE FROM photos WHERE product_id = ? ;"
     datas = [product_title, product_price, product_state, product_content, product_id, product_id];
     connection.query(sqlForSelectList, datas, function(err, result){
       if(err) console.error("err : "+err);
-      //console.log("insert ID : "+JSON.stringify(result.insertId));
-      //insertID = result.insertId;
       for(let i =0; i<req.files.length; i++){
             product_image.push([product_id, req.files[i].filename]);
       };
-      // for(let i =0; i<filename.length; i++){
-      //     product_image.push([insertID, filename[i]]);
-      // }
       var sqlForPhoto = "INSERT INTO photos (product_id, photo_data) VALUES ?";
       connection.query(sqlForPhoto, [product_image], function(err, result){
           if(err) console.error("err : "+err);
@@ -506,7 +495,6 @@ router.post('/api/notice_list_write', auth, function (req, res) {
   var member_email = req.row.member_email;
   var notice_title = req.body.notice_title;
   var notice_content = req.body.notice_content;
-  //var member_email = req.body.member_email;
 
   pool.getConnection(function (err, connection) {
     var sqlForSelectList = "SELECT admin_id FROM admins WHERE admin_email = ?;";
@@ -526,6 +514,21 @@ router.post('/api/notice_list_write', auth, function (req, res) {
     });
   });
 });
+
+router.get('/api/notice/:notice_id', auth, function (req, res) {
+  var notice_id = req.params.notice_id;
+  pool.getConnection(function (err, connection) {
+    var sqlForSelectList = "SELECT * FROM notices WHERE notice_id = ?;";
+    connection.query(sqlForSelectList, notice_id, function (err, rows) {
+      if (err) console.error("err : " + err);
+      console.log("rows : " + JSON.stringify(rows[0]));
+
+      res.send(rows);
+      connection.release();
+    });
+  });
+});
+
 
 router.get('/delete/:product_id', auth, function(req, res){
   var member_email = req.row.member_email;
