@@ -1,13 +1,50 @@
 
 import styled from 'styled-components';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BP_ProdInfo from '../components/BP_ProdInfo';
 import BP_ProdImage from '../components/BP_ProdImage';
 import BP_Prod from '../components/BP_Prod';
 import BP_SellerInfo from '../components/BP_SellerInfo';
+import axios from 'axios';
 
+const List = [];
+const [SList, SetSList]=useState()
 //props : 
+const sellList = (props) => {
+  return(
+    <>
+    <tr> 
+      <td>{props.title}</td>
+      <td>1</td>
+      <td>{props.price}</td>
+      <td>fuck</td>
+      <td>you</td>
+    </tr>
+    </>
+  );
+}
+
 const MyPage = (props) => {
+  
+  useEffect(() => {
+    console.log('11233')
+    axios.get('/api/member_selling')
+    .then((res) => {
+      console.log('asdf');
+      console.log(res.data[0]);
+
+      const length = res.data.length;
+      console.log(length);
+      console.log(res.data[0].product_title)
+      for(var i = 0; i < length; i++){ 
+        SetSList
+        List.push(
+          <sellList title={res.data[i].product_title} price={res.data[i].product_price} />
+        );
+        console.log(res.data[i].product_title  + ' ' + res.data[i].product_price);
+      }
+    })
+  })
 
   return (
     <>
@@ -31,6 +68,7 @@ const MyPage = (props) => {
             </tr>
           </Thead>
           <Tbody>
+            {List}
           </Tbody>
         </CartContainer>
       </Container>
